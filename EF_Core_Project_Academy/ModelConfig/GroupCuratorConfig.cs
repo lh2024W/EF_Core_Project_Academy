@@ -21,12 +21,12 @@ namespace EF_Core_Project_Academy.ModelConfig
 
             tb.Property(e => e.GroupId).HasColumnName("groupsCurators_groupId").IsRequired();
 
-            tb.HasOne(d => d.Curator).WithMany(p => p.GroupCurators)
+            tb.HasOne(d => d.Curator).WithMany(p => p.GroupsCurators)
                 .HasForeignKey(d => d.CuratorId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsCurators_curatorId");
 
-            tb.HasOne(d => d.Group).WithMany(p => p.GroupCurators)
+            tb.HasOne(d => d.Group).WithMany(p => p.GroupsCurators)
                 .HasForeignKey(d => d.GroupId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsCurators_groupId");

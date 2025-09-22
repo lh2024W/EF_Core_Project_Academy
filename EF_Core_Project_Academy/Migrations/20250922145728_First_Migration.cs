@@ -73,7 +73,7 @@ namespace EF_Core_Project_Academy.Migrations
                 {
                     teachers_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    teachers_IsProfessor = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "('0')"),
+                    teachers_IsProfessor = table.Column<bool>(type: "bit", nullable: true, defaultValue: false),
                     teachers_name = table.Column<string>(type: "nvarchar(MAX)", nullable: false),
                     teachers_salary = table.Column<decimal>(type: "money", nullable: false),
                     teachers_surname = table.Column<string>(type: "nvarchar(MAX)", nullable: false)
@@ -99,7 +99,6 @@ namespace EF_Core_Project_Academy.Migrations
                 {
                     table.PrimaryKey("PK_DepartmentId", x => x.departments_id);
                     table.CheckConstraint("CC_DepartmentBuilding", "[departments_building] >= 1 AND [departments_building] <= 5");
-                    table.CheckConstraint("CC_DepartmentFinancing", "[departments_financing] > 0");
                     table.ForeignKey(
                         name: "FK_departments_facultyId",
                         column: x => x.departments_facultyId,
@@ -253,7 +252,7 @@ namespace EF_Core_Project_Academy.Migrations
                 column: "groups_departmentId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ__Groups__86DEB79295B494D0",
+                name: "UQ_GroupsName",
                 table: "Groups",
                 column: "groups_name",
                 unique: true);

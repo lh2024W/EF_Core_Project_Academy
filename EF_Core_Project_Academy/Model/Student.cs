@@ -16,7 +16,7 @@ namespace EF_Core_Project_Academy.Model
 
         public string Surname { get; set; } = null!;
 
-        public List<GroupStudent> GroupStudents { get; set; } = new List<GroupStudent>();
+        public List<GroupStudent> GroupsStudents { get; set; } = new List<GroupStudent>();
         
     }
 }

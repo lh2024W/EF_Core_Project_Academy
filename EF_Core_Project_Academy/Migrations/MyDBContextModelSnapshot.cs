@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EF_Core_Project_Academy.Migrations
 {
-    [DbContext(typeof(AcademyDBContext))]
-    partial class AcademyDBContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MyDBContext))]
+    partial class MyDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -86,8 +86,6 @@ namespace EF_Core_Project_Academy.Migrations
                     b.ToTable("Departments", null, t =>
                         {
                             t.HasCheckConstraint("CC_DepartmentBuilding", "[departments_building] >= 1 AND [departments_building] <= 5");
-
-                            t.HasCheckConstraint("CC_DepartmentFinancing", "[departments_financing] > 0");
                         });
                 });
 
@@ -141,7 +139,7 @@ namespace EF_Core_Project_Academy.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.HasIndex(new[] { "Name" }, "UQ__Groups__86DEB79295B494D0")
+                    b.HasIndex(new[] { "Name" }, "UQ_GroupsName")
                         .IsUnique();
 
                     b.ToTable("Groups", null, t =>
@@ -303,8 +301,8 @@ namespace EF_Core_Project_Academy.Migrations
                     b.Property<bool?>("IsProfessor")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasColumnName("teachers_IsProfessor")
-                        .HasDefaultValueSql("('0')");
+                        .HasDefaultValue(false)
+                        .HasColumnName("teachers_IsProfessor");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -356,14 +354,14 @@ namespace EF_Core_Project_Academy.Migrations
             modelBuilder.Entity("EF_Core_Project_Academy.Model.GroupCurator", b =>
                 {
                     b.HasOne("EF_Core_Project_Academy.Model.Curator", "Curator")
-                        .WithMany("GroupCurators")
+                        .WithMany("GroupsCurators")
                         .HasForeignKey("CuratorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_groupsCurators_curatorId");
 
                     b.HasOne("EF_Core_Project_Academy.Model.Group", "Group")
-                        .WithMany("GroupCurators")
+                        .WithMany("GroupsCurators")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -377,14 +375,14 @@ namespace EF_Core_Project_Academy.Migrations
             modelBuilder.Entity("EF_Core_Project_Academy.Model.GroupLecture", b =>
                 {
                     b.HasOne("EF_Core_Project_Academy.Model.Group", "Group")
-                        .WithMany("GroupLectures")
+                        .WithMany("GroupsLectures")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_groupsLectures_groupId");
 
                     b.HasOne("EF_Core_Project_Academy.Model.Lecture", "Lecture")
-                        .WithMany("GroupLectures")
+                        .WithMany("GroupsLectures")
                         .HasForeignKey("LectureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -398,14 +396,14 @@ namespace EF_Core_Project_Academy.Migrations
             modelBuilder.Entity("EF_Core_Project_Academy.Model.GroupStudent", b =>
                 {
                     b.HasOne("EF_Core_Project_Academy.Model.Group", "Group")
-                        .WithMany("GroupStudents")
+                        .WithMany("GroupsStudents")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_groupsStudents_groupId");
 
                     b.HasOne("EF_Core_Project_Academy.Model.Student", "Student")
-                        .WithMany("GroupStudents")
+                        .WithMany("GroupsStudents")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -439,7 +437,7 @@ namespace EF_Core_Project_Academy.Migrations
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Curator", b =>
                 {
-                    b.Navigation("GroupCurators");
+                    b.Navigation("GroupsCurators");
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Department", b =>
@@ -454,21 +452,21 @@ namespace EF_Core_Project_Academy.Migrations
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Group", b =>
                 {
-                    b.Navigation("GroupCurators");
+                    b.Navigation("GroupsCurators");
 
-                    b.Navigation("GroupLectures");
+                    b.Navigation("GroupsLectures");
 
-                    b.Navigation("GroupStudents");
+                    b.Navigation("GroupsStudents");
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Lecture", b =>
                 {
-                    b.Navigation("GroupLectures");
+                    b.Navigation("GroupsLectures");
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Student", b =>
                 {
-                    b.Navigation("GroupStudents");
+                    b.Navigation("GroupsStudents");
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Subject", b =>

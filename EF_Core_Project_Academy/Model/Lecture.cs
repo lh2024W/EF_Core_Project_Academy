@@ -19,7 +19,7 @@ namespace EF_Core_Project_Academy.Model
 
         public Teacher Teacher { get; set; } = new Teacher();
 
-        public List<GroupLecture> GroupLectures { get; set; } = new List<GroupLecture>();
+        public List<GroupLecture> GroupsLectures { get; set; } = new List<GroupLecture>();
 
 
     }

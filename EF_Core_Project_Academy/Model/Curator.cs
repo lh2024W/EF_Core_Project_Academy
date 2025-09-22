@@ -14,7 +14,7 @@ namespace EF_Core_Project_Academy.Model
 
         public string Surname { get; set; } = null!;
 
-        public List<GroupCurator> GroupCurators { get; set; } = new List<GroupCurator>();
+        public List<GroupCurator> GroupsCurators { get; set; } = new List<GroupCurator>();
 
     }
 }

@@ -19,7 +19,7 @@ namespace EF_Core_Project_Academy.ModelConfig
             tb.Property(e => e.Id).HasColumnName("teachers_id");
             
             tb.Property(e => e.IsProfessor).HasColumnName("teachers_IsProfessor")
-                .HasDefaultValueSql("('0')")
+                .HasDefaultValue(false)
                 .HasColumnType("bit");
 
             tb.Property(e => e.Name).HasColumnName("teachers_name")

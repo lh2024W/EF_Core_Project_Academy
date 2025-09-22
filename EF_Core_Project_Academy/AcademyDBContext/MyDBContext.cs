@@ -1,4 +1,5 @@
 ﻿using EF_Core_Project_Academy.Model;
+using EF_Core_Project_Academy.ModelConfig;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace EF_Core_Project_Academy.AcademyDBContext
 {
-    public partial class AcademyDBContext : DbContext
+    public partial class MyDBContext : DbContext
     {
-        public AcademyDBContext()
+        public MyDBContext()
         {
 
         }
-        public AcademyDBContext(DbContextOptions<AcademyDBContext> options) : base(options)
+        public MyDBContext(DbContextOptions<MyDBContext> options) : base(options)
         {
 
         }
@@ -48,9 +49,11 @@ namespace EF_Core_Project_Academy.AcademyDBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AcademyDBContext).Assembly);
+            
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(EF_Core_Project_Academy.AcademyDBContext.MyDBContext).Assembly);
 
-            OnModelCreatingPartial(modelBuilder);
+
+            //OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

@@ -21,12 +21,12 @@ namespace EF_Core_Project_Academy.ModelConfig
 
             tb.Property(e => e.StudentId).HasColumnName("groupsStudents_studentId").IsRequired();
 
-            tb.HasOne(d => d.Group).WithMany(p => p.GroupStudents)
+            tb.HasOne(d => d.Group).WithMany(p => p.GroupsStudents)
                 .HasForeignKey(d => d.GroupId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsStudents_groupId");
 
-            tb.HasOne(d => d.Student).WithMany(p => p.GroupStudents)
+            tb.HasOne(d => d.Student).WithMany(p => p.GroupsStudents)
                 .HasForeignKey(d => d.StudentId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsStudents_studentId");

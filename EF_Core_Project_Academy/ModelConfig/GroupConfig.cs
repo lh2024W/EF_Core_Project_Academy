@@ -18,7 +18,7 @@ namespace EF_Core_Project_Academy.ModelConfig
             tb.HasKey(e => e.Id).HasName("PK_GroupId");
             tb.Property(e => e.Id).HasColumnName("groups_id");
 
-            tb.HasIndex(e => e.Name, "UQ__Groups__86DEB79295B494D0").IsUnique();
+            tb.HasIndex(e => e.Name, "UQ_GroupsName").IsUnique();
             tb.Property(e => e.Name).HasColumnName("groups_name")
                 .HasColumnType("nvarchar(10)")
                 .IsRequired();

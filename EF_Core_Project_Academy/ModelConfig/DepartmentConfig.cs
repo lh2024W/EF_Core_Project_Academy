@@ -24,7 +24,7 @@ namespace EF_Core_Project_Academy.ModelConfig
             tb.Property(e => e.Financing).HasColumnName("departments_financing")
                 .HasDefaultValueSql("('0')")
                 .HasColumnType("money");
-            tb.HasCheckConstraint("CC_DepartmentFinancing", "[departments_financing] > 0");
+            
 
             tb.HasIndex(e => e.Name, "UQ_DepartmentName").IsUnique();
             tb.Property(e => e.Name).HasColumnName("departments_name")

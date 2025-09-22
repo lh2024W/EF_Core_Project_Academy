@@ -18,10 +18,10 @@ namespace EF_Core_Project_Academy.Model
 
         public Department Department { get; set; } = new Department();
 
-        public List<GroupLecture> GroupLectures { get; set; } = new List<GroupLecture>();
+        public List<GroupLecture> GroupsLectures { get; set; } = new List<GroupLecture>();
 
-        public List<GroupStudent> GroupStudents { get; set; } = new List<GroupStudent>();
+        public List<GroupStudent> GroupsStudents { get; set; } = new List<GroupStudent>();
 
-        public List<GroupCurator> GroupCurators { get; set; } = new List<GroupCurator>();
+        public List<GroupCurator> GroupsCurators { get; set; } = new List<GroupCurator>();
     }
 }
