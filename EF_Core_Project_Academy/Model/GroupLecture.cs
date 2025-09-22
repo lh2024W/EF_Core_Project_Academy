@@ -8,8 +8,6 @@ namespace EF_Core_Project_Academy.Model
 {
     public partial class GroupLecture
     {
-        public int Id { get; set; }
-
         public int GroupId { get; set; }
 
         public Group Group { get; set; } = new Group();

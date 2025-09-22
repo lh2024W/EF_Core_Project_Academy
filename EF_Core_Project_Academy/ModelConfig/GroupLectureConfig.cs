@@ -13,21 +13,22 @@ namespace EF_Core_Project_Academy.ModelConfig
     {
         public void Configure(EntityTypeBuilder<GroupLecture> tb)
         {
-            tb.HasKey(e => e.Id).HasName("PK_GroupLectureId");
-            tb.Property(e => e.Id).HasColumnName("groupsLectures_id");
+            tb.ToTable("GroupsLectures");
             
-            tb.Property(e => e.GroupId).HasColumnName("groupsLectures_groupId");
+            tb.HasKey(t => new { t.GroupId, t.LectureId });
 
-            tb.Property(e => e.LectureId).HasColumnName("groupsLectures_lectureId");
+            tb.Property(e => e.GroupId).HasColumnName("groupsLectures_groupId").IsRequired();
+
+            tb.Property(e => e.LectureId).HasColumnName("groupsLectures_lectureId").IsRequired();
 
             tb.HasOne(d => d.Group).WithMany(p => p.GroupLectures)
                 .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsLectures_groupId");
 
             tb.HasOne(d => d.Lecture).WithMany(p => p.GroupLectures)
                 .HasForeignKey(d => d.LectureId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsLectures_lectureId");
            
         }

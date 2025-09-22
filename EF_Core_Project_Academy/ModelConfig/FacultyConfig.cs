@@ -13,6 +13,8 @@ namespace EF_Core_Project_Academy.ModelConfig
     {
         public void Configure(EntityTypeBuilder<Faculty> tb)
         {
+            tb.ToTable("Faculties");
+
             tb.HasKey(e => e.Id).HasName("PK_FacultyId");
             tb.Property(e => e.Id).HasColumnName("faculties_id");
 

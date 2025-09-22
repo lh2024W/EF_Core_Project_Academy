@@ -13,8 +13,10 @@ namespace EF_Core_Project_Academy.ModelConfig
     {
         public void Configure(EntityTypeBuilder<Curator> tb)
         {
-            tb.HasKey(e => e.Id).HasName("PK_СuratorId");
-            tb.Property(e => e.Id).HasColumnName("сurators_id");
+            tb.ToTable("Curators");
+
+            tb.HasKey(e => e.Id).HasName("PK_CuratorId");
+            tb.Property(e => e.Id).HasColumnName("curators_id");
              
             tb.Property(e => e.Name).HasColumnName("curators_name")
                 .HasColumnType("nvarchar(MAX)")

@@ -13,6 +13,8 @@ namespace EF_Core_Project_Academy.ModelConfig
     {
         public void Configure(EntityTypeBuilder<Group> tb)
         {
+            tb.ToTable("Groups");
+
             tb.HasKey(e => e.Id).HasName("PK_GroupId");
             tb.Property(e => e.Id).HasColumnName("groups_id");
 
@@ -29,7 +31,7 @@ namespace EF_Core_Project_Academy.ModelConfig
             
             tb.HasOne(d => d.Department).WithMany(p => p.Groups)
                 .HasForeignKey(d => d.DepartmentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groups_departmentId");
             
         }

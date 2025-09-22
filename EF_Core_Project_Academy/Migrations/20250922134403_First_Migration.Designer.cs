@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EF_Core_Project_Academy.Migrations
 {
     [DbContext(typeof(AcademyDBContext))]
-    [Migration("20250922122200_First_Migration")]
+    [Migration("20250922134403_First_Migration")]
     partial class First_Migration
     {
         /// <inheritdoc />
@@ -29,254 +29,307 @@ namespace EF_Core_Project_Academy.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("curators_id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasColumnName("curators_name");
 
                     b.Property<string>("Surname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasColumnName("curators_surname");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_CuratorId");
 
-                    b.ToTable("Curators");
+                    b.ToTable("Curators", (string)null);
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("departments_id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Building")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("departments_building");
 
                     b.Property<int>("FacultyId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("departments_facultyId");
 
                     b.Property<decimal>("Financing")
-                        .HasColumnType("decimal(18,2)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("money")
+                        .HasColumnName("departments_financing")
+                        .HasDefaultValueSql("('0')");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("departments_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_DepartmentId");
 
                     b.HasIndex("FacultyId");
 
-                    b.ToTable("Departments");
+                    b.HasIndex(new[] { "Name" }, "UQ_DepartmentName")
+                        .IsUnique();
+
+                    b.ToTable("Departments", null, t =>
+                        {
+                            t.HasCheckConstraint("CC_DepartmentBuilding", "[departments_building] >= 1 AND [departments_building] <= 5");
+
+                            t.HasCheckConstraint("CC_DepartmentFinancing", "[departments_financing] > 0");
+                        });
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Faculty", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("faculties_id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("faculties_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_FacultyId");
 
-                    b.ToTable("Faculties");
+                    b.HasIndex(new[] { "Name" }, "UQ_FacultyName")
+                        .IsUnique();
+
+                    b.ToTable("Faculties", (string)null);
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Group", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("groups_id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("groups_departmentId");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("groups_name");
 
                     b.Property<int>("Year")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("groups_year");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_GroupId");
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Groups");
+                    b.HasIndex(new[] { "Name" }, "UQ__Groups__86DEB79295B494D0")
+                        .IsUnique();
+
+                    b.ToTable("Groups", null, t =>
+                        {
+                            t.HasCheckConstraint("CC_GroupYear", "[groups_year] >= 1 AND [groups_year] <= 5");
+                        });
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.GroupCurator", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("CuratorId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("groupsCurators_curatorId");
 
                     b.Property<int>("GroupId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("groupsCurators_groupId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("CuratorId");
+                    b.HasKey("CuratorId", "GroupId");
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("GroupsCurators");
+                    b.ToTable("GroupsCurators", (string)null);
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.GroupLecture", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("GroupId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("groupsLectures_groupId");
 
                     b.Property<int>("LectureId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("groupsLectures_lectureId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
+                    b.HasKey("GroupId", "LectureId");
 
                     b.HasIndex("LectureId");
 
-                    b.ToTable("GroupsLectures");
+                    b.ToTable("GroupsLectures", (string)null);
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.GroupStudent", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("GroupId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("groupsStudents_groupId");
 
                     b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("groupsStudents_studentId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
+                    b.HasKey("GroupId", "StudentId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("GroupsStudents");
+                    b.ToTable("GroupsStudents", (string)null);
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Lecture", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("lectures_id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateOnly>("LectureDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("lectures_date");
 
                     b.Property<int>("SubjectId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("lectures_subjectId");
 
                     b.Property<int>("TeacherId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("lectures_teacherId");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_LectureId");
 
                     b.HasIndex("SubjectId");
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Lectures");
+                    b.ToTable("Lectures", null, t =>
+                        {
+                            t.HasCheckConstraint("CC_LectureDate", "[lectures_date] <= GETDATE()");
+                        });
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Student", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("students_id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasColumnName("students_name");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("students_rating");
 
                     b.Property<string>("Surname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasColumnName("students_surname");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_StudentId");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", null, t =>
+                        {
+                            t.HasCheckConstraint("CC_StudentRating", "[students_rating] > 0 AND [students_rating] <= 5");
+                        });
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Subject", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("subjects_id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("subjects_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_SubjectId");
 
-                    b.ToTable("Subjects");
+                    b.HasIndex(new[] { "Name" }, "UQ_SubjectName")
+                        .IsUnique();
+
+                    b.ToTable("Subjects", (string)null);
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Teacher", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("teachers_id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool?>("IsProfessor")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasColumnName("teachers_IsProfessor")
+                        .HasDefaultValueSql("('0')");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasColumnName("teachers_name");
 
                     b.Property<decimal>("Salary")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("money")
+                        .HasColumnName("teachers_salary");
 
                     b.Property<string>("Surname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasColumnName("teachers_surname");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_TeacherId");
 
-                    b.ToTable("Teachers");
+                    b.ToTable("Teachers", null, t =>
+                        {
+                            t.HasCheckConstraint("CC_TeacherSalary", "[teachers_salary] >= 0");
+                        });
                 });
 
             modelBuilder.Entity("EF_Core_Project_Academy.Model.Department", b =>
@@ -285,7 +338,8 @@ namespace EF_Core_Project_Academy.Migrations
                         .WithMany("Departments")
                         .HasForeignKey("FacultyId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_departments_facultyId");
 
                     b.Navigation("Faculty");
                 });
@@ -296,7 +350,8 @@ namespace EF_Core_Project_Academy.Migrations
                         .WithMany("Groups")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_groups_departmentId");
 
                     b.Navigation("Department");
                 });
@@ -307,13 +362,15 @@ namespace EF_Core_Project_Academy.Migrations
                         .WithMany("GroupCurators")
                         .HasForeignKey("CuratorId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_groupsCurators_curatorId");
 
                     b.HasOne("EF_Core_Project_Academy.Model.Group", "Group")
                         .WithMany("GroupCurators")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_groupsCurators_groupId");
 
                     b.Navigation("Curator");
 
@@ -326,13 +383,15 @@ namespace EF_Core_Project_Academy.Migrations
                         .WithMany("GroupLectures")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_groupsLectures_groupId");
 
                     b.HasOne("EF_Core_Project_Academy.Model.Lecture", "Lecture")
                         .WithMany("GroupLectures")
                         .HasForeignKey("LectureId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_groupsLectures_lectureId");
 
                     b.Navigation("Group");
 
@@ -345,13 +404,15 @@ namespace EF_Core_Project_Academy.Migrations
                         .WithMany("GroupStudents")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_groupsStudents_groupId");
 
                     b.HasOne("EF_Core_Project_Academy.Model.Student", "Student")
                         .WithMany("GroupStudents")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_groupsStudents_studentId");
 
                     b.Navigation("Group");
 
@@ -364,13 +425,15 @@ namespace EF_Core_Project_Academy.Migrations
                         .WithMany("Lectures")
                         .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_lectures_subjectId");
 
                     b.HasOne("EF_Core_Project_Academy.Model.Teacher", "Teacher")
                         .WithMany("Lectures")
                         .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_lectures_teacherId");
 
                     b.Navigation("Subject");
 

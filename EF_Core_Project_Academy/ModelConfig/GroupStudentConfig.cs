@@ -13,21 +13,22 @@ namespace EF_Core_Project_Academy.ModelConfig
     {
         public void Configure(EntityTypeBuilder<GroupStudent> tb)
         {
-            tb.HasKey(e => e.Id).HasName("PK_GroupStudentId");
-            tb.Property(e => e.Id).HasColumnName("groupsStudents_id");
+            tb.ToTable("GroupsStudents");
+            
+            tb.HasKey(t => new { t.GroupId, t.StudentId });
 
-            tb.Property(e => e.GroupId).HasColumnName("groupsStudents_groupId");
+            tb.Property(e => e.GroupId).HasColumnName("groupsStudents_groupId").IsRequired();
 
-            tb.Property(e => e.StudentId).HasColumnName("groupsStudents_studentId");
+            tb.Property(e => e.StudentId).HasColumnName("groupsStudents_studentId").IsRequired();
 
             tb.HasOne(d => d.Group).WithMany(p => p.GroupStudents)
                 .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsStudents_groupId");
 
             tb.HasOne(d => d.Student).WithMany(p => p.GroupStudents)
                 .HasForeignKey(d => d.StudentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsStudents_studentId");
             
         }

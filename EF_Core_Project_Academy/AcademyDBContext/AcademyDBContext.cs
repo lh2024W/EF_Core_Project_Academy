@@ -48,8 +48,9 @@ namespace EF_Core_Project_Academy.AcademyDBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-            //OnModelCreatingPartial(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AcademyDBContext).Assembly);
+
+            OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

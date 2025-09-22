@@ -13,6 +13,8 @@ namespace EF_Core_Project_Academy.ModelConfig
     {
         public void Configure(EntityTypeBuilder<Department> tb)
         {
+            tb.ToTable("Departments");
+
             tb.HasKey(e => e.Id).HasName("PK_DepartmentId");
             tb.Property(e => e.Id).HasColumnName("departments_id");
 
@@ -35,7 +37,7 @@ namespace EF_Core_Project_Academy.ModelConfig
            
              tb.HasOne(d => d.Faculty).WithMany(p => p.Departments)
                 .HasForeignKey(d => d.FacultyId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_departments_facultyId");
 
             

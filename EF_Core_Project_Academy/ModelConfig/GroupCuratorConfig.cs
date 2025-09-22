@@ -13,21 +13,22 @@ namespace EF_Core_Project_Academy.ModelConfig
     {
         public void Configure(EntityTypeBuilder<GroupCurator> tb)
         {
-            tb.HasKey(e => e.Id).HasName("PK_GroupCuratorId");
-            tb.Property(e => e.Id).HasColumnName("groupsCurators_id");
+            tb.ToTable("GroupsCurators");
 
-            tb.Property(e => e.CuratorId).HasColumnName("groupsCurators_curatorId");
+            tb.HasKey(t => new { t.CuratorId, t.GroupId });
 
-            tb.Property(e => e.GroupId).HasColumnName("groupsCurators_groupId");
+            tb.Property(e => e.CuratorId).HasColumnName("groupsCurators_curatorId").IsRequired();
+
+            tb.Property(e => e.GroupId).HasColumnName("groupsCurators_groupId").IsRequired();
 
             tb.HasOne(d => d.Curator).WithMany(p => p.GroupCurators)
                 .HasForeignKey(d => d.CuratorId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsCurators_curatorId");
 
             tb.HasOne(d => d.Group).WithMany(p => p.GroupCurators)
                 .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_groupsCurators_groupId");
             
         }

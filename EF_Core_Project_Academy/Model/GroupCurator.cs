@@ -8,8 +8,6 @@ namespace EF_Core_Project_Academy.Model
 {
     public partial class GroupCurator
     {
-        public int Id { get; set; }
-
         public int CuratorId { get; set; }
 
         public Curator Curator { get; set; } = new Curator();
