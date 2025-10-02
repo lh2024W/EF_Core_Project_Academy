@@ -53,7 +53,7 @@ namespace EF_Core_Project_Academy.AcademyDBContext
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(EF_Core_Project_Academy.AcademyDBContext.MyDBContext).Assembly);
 
 
-            //OnModelCreatingPartial(modelBuilder);
+            OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

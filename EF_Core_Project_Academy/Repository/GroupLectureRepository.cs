@@ -10,18 +10,17 @@ using System.Threading.Tasks;
 
 namespace EF_Core_Project_Academy.Repository
 {
-    public class GroupLectureRepository : IBaseRepository<Department>
+    public class GroupLectureRepository : IBaseRepository<GroupLecture>
     {
 
         IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
 
-
-        public bool Delete(Department entity)
+        public bool Delete(GroupLecture entity)
         {
             throw new NotImplementedException();
         }
 
-        public Department GetById(int id)
+        public GroupLecture GetById(int id)
         {
             throw new NotImplementedException();
         }
@@ -31,21 +30,20 @@ namespace EF_Core_Project_Academy.Repository
             throw new NotImplementedException();
         }
 
-        public int Insert(Department entity)
+        public int Insert(GroupLecture entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Department> Select()
+        public IEnumerable<GroupLecture> Select()
         {
             throw new NotImplementedException();
         }
 
-        public int Update(Department entity)
+        public int Update(GroupLecture entity)
         {
             throw new NotImplementedException();
         }
-
     }
     
 }

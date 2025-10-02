@@ -1,4 +1,5 @@
-﻿using EF_Core_Project_Academy.Interfaces;
+﻿using EF_Core_Project_Academy.AcademyDBContext;
+using EF_Core_Project_Academy.Interfaces;
 using EF_Core_Project_Academy.Model;
 using Microsoft.Data.SqlClient;
 using System;
@@ -10,42 +11,48 @@ using System.Threading.Tasks;
 
 namespace EF_Core_Project_Academy.Repository
 {
-    public class SubjectRepository : IBaseRepository<Department>
+    public class SubjectRepository : IBaseRepository<Subject>
     {
 
         IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
 
-
-        public bool Delete(Department entity)
+        public bool Delete(Subject entity)
         {
             throw new NotImplementedException();
         }
 
-        public Department GetById(int id)
+        public Subject GetById(int id)
         {
-            throw new NotImplementedException();
+            using (MyDBContext context = new MyDBContext())
+            {
+                var subj = context.Subjects.FirstOrDefault( s => s.Id == id);
+                return subj;
+            }
         }
 
         public int GetIdByName(string name)
         {
-            throw new NotImplementedException();
+            using (MyDBContext context = new MyDBContext())
+            {
+                var subjId = context.Subjects.Where(s => s.Name == name).Select(s => s.Id).FirstOrDefault();
+                return subjId;
+            }
         }
 
-        public int Insert(Department entity)
+        public int Insert(Subject entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Department> Select()
+        public IEnumerable<Subject> Select()
         {
             throw new NotImplementedException();
         }
 
-        public int Update(Department entity)
+        public int Update(Subject entity)
         {
             throw new NotImplementedException();
         }
-
     }
     
 }

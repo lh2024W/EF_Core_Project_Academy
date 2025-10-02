@@ -19,7 +19,7 @@ namespace EF_Core_Project_Academy.ModelConfig
             tb.Property(e => e.Id).HasColumnName("lectures_id");
 
             tb.Property(e => e.LectureDate).HasColumnName("lectures_date");
-            tb.HasCheckConstraint("CC_LectureDate", "[lectures_date] <= GETDATE()");
+            //tb.HasCheckConstraint("CC_LectureDate", "[lectures_date] <= GETDATE()");
 
 
             tb.Property(e => e.SubjectId).HasColumnName("lectures_subjectId").IsRequired();

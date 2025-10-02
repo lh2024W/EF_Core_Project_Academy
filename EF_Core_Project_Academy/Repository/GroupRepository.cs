@@ -1,4 +1,5 @@
-﻿using EF_Core_Project_Academy.Interfaces;
+﻿using EF_Core_Project_Academy.AcademyDBContext;
+using EF_Core_Project_Academy.Interfaces;
 using EF_Core_Project_Academy.Model;
 using Microsoft.Data.SqlClient;
 using System;
@@ -10,42 +11,48 @@ using System.Threading.Tasks;
 
 namespace EF_Core_Project_Academy.Repository
 {
-    public class GroupRepository : IBaseRepository<Department>
+    public class GroupRepository : IBaseRepository<Group>
     {
 
         IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
 
-
-        public bool Delete(Department entity)
+        public bool Delete(Group entity)
         {
             throw new NotImplementedException();
         }
 
-        public Department GetById(int id)
+        public Group GetById(int id)
         {
-            throw new NotImplementedException();
+            using (MyDBContext context = new MyDBContext())
+            {
+                var gr = context.Groups.FirstOrDefault(g => g.Id == id);
+                return gr;
+            }
         }
 
         public int GetIdByName(string name)
         {
-            throw new NotImplementedException();
+            using (MyDBContext context = new MyDBContext())
+            {
+                var grId = context.Groups.Where(g => g.Name == name).Select(g => g.Id).FirstOrDefault();
+                return grId;
+            }
         }
 
-        public int Insert(Department entity)
+        public int Insert(Group entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Department> Select()
+        public IEnumerable<Group> Select()
         {
             throw new NotImplementedException();
         }
 
-        public int Update(Department entity)
+        public int Update(Group entity)
         {
             throw new NotImplementedException();
         }
-
     }
     
 }
