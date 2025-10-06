@@ -21,7 +21,8 @@ namespace EF_Core_Project_Academy.Repository
         {
             using (MyDBContext context = new MyDBContext())
             {
-                if (entity != null)
+                var id = context.Teachers.Where(t => t.Id == entity.Id).Select(t => t.Id).FirstOrDefault();
+                if (id > 0)
                 {
                     context.Teachers.Remove(entity);
                     context.SaveChanges();
@@ -51,15 +52,27 @@ namespace EF_Core_Project_Academy.Repository
 
         public int Insert(Teacher entity)
         {
+            if (entity is null) return 0;
+
             using (MyDBContext context = new MyDBContext())
             {
-                if (entity != null)
+                // Проверяем наличие дубля
+                bool exists = context.Teachers.Any(t =>
+                    t.Name == entity.Name &&
+                    t.Surname == entity.Surname
+                );
+
+                if (exists)
                 {
-                    context.Teachers.Add(entity);
-                    context.SaveChanges();
-                    return entity.Id;
+                    Console.WriteLine("Такой преподаватель уже есть!");
+                    return 0;        // уже есть такой преподаватель, не добавляем
                 }
-                return 0;
+
+                context.Teachers.Add(entity); //добавляем, возвращаем Id
+                context.SaveChanges();
+
+                return entity.Id;
+                
             }
         }
 
@@ -67,22 +80,28 @@ namespace EF_Core_Project_Academy.Repository
         {
             using (MyDBContext context = new MyDBContext())
             {
-                context.Teachers.ToList();
-                return context.Teachers;
+                var allTeachers = context.Teachers.ToList();
+                return allTeachers;
             }
         }
 
         public int Update(Teacher entity)
         {
+            if (entity is null || entity.Id <= 0) return 0;
+
             using (MyDBContext context = new MyDBContext())
             {
-                if (entity != null)
-                {
-                    context.Teachers.Update(entity);
-                    context.SaveChanges();
-                    return entity.Id;
-                }
-                return 0;
+                var t = context.Teachers.Find(entity.Id);
+                if (t is null) return 0;
+
+                // копируем нужные поля
+                t.Name = entity.Name;
+                t.Surname = entity.Surname;
+                t.IsProfessor = entity.IsProfessor;
+                t.Salary = entity.Salary;
+                context.SaveChanges();
+
+                return entity.Id;
             }
         }
     }

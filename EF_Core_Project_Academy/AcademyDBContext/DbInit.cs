@@ -14,6 +14,31 @@ namespace EF_Core_Project_Academy.AcademyDBContext
     {
         public static void Init(MyDBContext db)
         {
+            ////////////////// заполняем родительские таблицы //////////////////////////////
+
+            if (!db.Curators.Any())
+            {
+                db.Curators.AddRange(new Curator[]
+                {
+                    new Curator { Name = "Петр", Surname = "Воробьев"},
+                    new Curator { Name = "Инга", Surname = "Иванова"},
+                    new Curator { Name = "Наталия", Surname = "Собко"},
+                    new Curator { Name = "Ольга", Surname = "Петрова"},
+                    new Curator { Name = "Сергей", Surname = "Кабанов"}
+                });
+                db.SaveChanges();
+            }
+
+            if (!db.Faculties.Any())
+            {
+                db.Faculties.AddRange(new Faculty[]
+                {
+                   new Faculty { Name = "Факультет математики"},
+                   new Faculty { Name = "Факультет компьютерных наук"},
+                   new Faculty { Name = "Факультет економики"}
+                });
+                db.SaveChanges();
+            }
 
             if (!db.Students.Any())
             {
@@ -35,15 +60,15 @@ namespace EF_Core_Project_Academy.AcademyDBContext
                 db.SaveChanges();
             }
 
-            if (!db.Curators.Any())
+            if (!db.Subjects.Any())
             {
-                db.Curators.AddRange(new Curator[]
+                db.Subjects.AddRange(new Subject[]
                 {
-                    new Curator { Name = "Петр", Surname = "Воробьев"},
-                    new Curator { Name = "Инга", Surname = "Иванова"},
-                    new Curator { Name = "Наталия", Surname = "Собко"},
-                    new Curator { Name = "Ольга", Surname = "Петрова"},
-                    new Curator { Name = "Сергей", Surname = "Кабанов"}
+                    new Subject { Name = "Математический анализ"},
+                    new Subject { Name = "Макроекономика"},
+                    new Subject { Name = "Микроекономика"},
+                    new Subject { Name = "Кибербезопасность"},
+                    new Subject { Name = "Теория маркетинга"}
                 });
                 db.SaveChanges();
             }
@@ -61,250 +86,351 @@ namespace EF_Core_Project_Academy.AcademyDBContext
                 db.SaveChanges();
             }
 
-            if (!db.Subjects.Any())
-            {
-                db.Subjects.AddRange(new Subject[]
-                {
-                    new Subject { Name = "Математический анализ"},
-                    new Subject { Name = "Макроекономика"},
-                    new Subject { Name = "Микроекономика"},
-                    new Subject { Name = "Кибербезопасность"},
-                    new Subject { Name = "Теория маркетинга"}
-                });
-                db.SaveChanges();
-            }
-
-            if (!db.Faculties.Any())
-            {
-                db.Faculties.AddRange(new Faculty[]
-                {
-                    new Faculty { Name = "Факультет математики"},
-                    new Faculty { Name = "Факультет компьютерных наук"},
-                    new Faculty { Name = "Факультет економики"}
-                });
-                db.SaveChanges();
-            }
-
-            if (!db.Lectures.Any())
-            {
-                SubjectRepository sr = new SubjectRepository();
-                TeacherRepository tr = new TeacherRepository();
-                db.Lectures.AddRange(new Lecture[]
-                {
-
-                    new Lecture { LectureDate = DateOnly.Parse("2025-09-23"),
-                                  SubjectId = sr.GetIdByName("Математический анализ"),
-                                  TeacherId = tr.GetIdByName("Бабич") },
-
-                    new Lecture { LectureDate = DateOnly.Parse("2025-09-20"),
-                                  SubjectId = sr.GetIdByName("Макроекономика"),
-                                  TeacherId = tr.GetIdByName("Грач") },
-
-                    new Lecture { LectureDate = DateOnly.Parse("2025-09-20"),
-                                  SubjectId = sr.GetIdByName("Микроекономика"),
-                                  TeacherId = tr.GetIdByName("Грач") },
-
-                    new Lecture { LectureDate = DateOnly.Parse("2025-09-21"),
-                                  SubjectId = sr.GetIdByName("Кибербезопасность"),
-                                  TeacherId = tr.GetIdByName("Шехов") },
-
-                    new Lecture { LectureDate = DateOnly.Parse("2025-09-19"),
-                                  SubjectId = sr.GetIdByName("Теория маркетинга"),
-                                  TeacherId = tr.GetIdByName("Филатов") }
-                });
-                db.SaveChanges();
-            }
+            /////////////////////////////// заполняем дочерние таблицы //////////////////////////////////
 
             if (!db.Departments.Any())
             {
+                DepartmentRepository dr = new DepartmentRepository();
                 FacultyRepository fr = new FacultyRepository();
 
-                db.Departments.AddRange(new Department[]
+                Department department1 = new Department()
                 {
-                    new Department { Building = 1,
-                                    Financing = 100000,
-                                    Name = "Кафедра алгебры",
-                                    FacultyId = fr.GetIdByName ("Факультет математики") },
+                    Building = 1,
+                    Financing = 100000,
+                    Name = "Кафедра алгебры",
+                    FacultyId = fr.GetIdByName("Факультет математики"),
+                };
+                dr.Insert(department1);
 
-                    new Department { Building = 1,
-                                    Financing = 110000,
-                                    Name = "Кафедра мат. анализа",
-                                    FacultyId = fr.GetIdByName ("Факультет математики") },
+                Department department2 = new Department()
+                {
+                    Building = 1,
+                    Financing = 110000,
+                    Name = "Кафедра мат. анализа",
+                    FacultyId = fr.GetIdByName("Факультет математики"),
+                };
+                dr.Insert(department2);
 
-                    new Department { Building = 1,
-                                    Financing = 80000,
-                                    Name = "Кафедра дифф. уравнений",
-                                    FacultyId = fr.GetIdByName ("Факультет математики") },
+                Department department3 = new Department()
+                {
+                    Building = 1,
+                    Financing = 80000,
+                    Name = "Кафедра дифф. уравнений",
+                    FacultyId = fr.GetIdByName("Факультет математики"),
+                };
+                dr.Insert(department3);
 
-                    new Department { Building = 3,
-                                    Financing = 200000,
-                                    Name = "Кафедра программной инженерии",
-                                    FacultyId = fr.GetIdByName ("Факультет компьютерных наук") },
+                Department department4 = new Department()
+                {
+                    Building = 3,
+                    Financing = 200000,
+                    Name = "Кафедра программной инженерии",
+                    FacultyId = fr.GetIdByName("Факультет компьютерных наук"),
+                };
+                dr.Insert(department4);
 
-                    new Department { Building = 3,
-                                    Financing = 250000,
-                                    Name = "Кафедра искусственного интеллекта",
-                                    FacultyId = fr.GetIdByName ("Факультет компьютерных наук") },
+                Department department5 = new Department()
+                {
+                    Building = 3,
+                    Financing = 250000,
+                    Name = "Кафедра искусственного интеллекта",
+                    FacultyId = fr.GetIdByName("Факультет компьютерных наук"),
+                };
+                dr.Insert(department5);
 
-                    new Department { Building = 3,
-                                    Financing = 190000,
-                                    Name = "Кафедра кибербезопасности",
-                                    FacultyId = fr.GetIdByName ("Факультет компьютерных наук") },
+                Department department6 = new Department()
+                {
+                    Building = 3,
+                    Financing = 190000,
+                    Name = "Кафедра кибербезопасности",
+                    FacultyId = fr.GetIdByName("Факультет компьютерных наук"),
+                };
+                dr.Insert(department6);
 
-                    new Department { Building = 2,
-                                    Financing = 50000,
-                                    Name = "Кафедра финансов",
-                                    FacultyId = fr.GetIdByName ("Факультет економики") },
+                Department department7 = new Department()
+                {
+                    Building = 2,
+                    Financing = 50000,
+                    Name = "Кафедра финансов",
+                    FacultyId = fr.GetIdByName("Факультет економики"),
+                };
+                dr.Insert(department7);
 
-                    new Department { Building = 2,
-                                    Financing = 60000,
-                                    Name = "Кафедра бухгалтерского учета",
-                                    FacultyId = fr.GetIdByName ("Факультет економики") },
+                Department department8 = new Department()
+                {
+                    Building = 2,
+                    Financing = 60000,
+                    Name = "Кафедра бухгалтерского учета",
+                    FacultyId = fr.GetIdByName("Факультет економики"),
+                };
+                dr.Insert(department8);
 
-                    new Department { Building = 2,
-                                    Financing = 50000,
-                                    Name = "Кафедра маркетинга",
-                                    FacultyId = fr.GetIdByName ("Факультет економики") }
-                });
-                db.SaveChanges();
+                Department department9 = new Department()
+                {
+                    Building = 2,
+                    Financing = 50000,
+                    Name = "Кафедра маркетинга",
+                    FacultyId = fr.GetIdByName("Факультет економики"),
+                };
+                dr.Insert(department9);
+
             }
 
             if (!db.Groups.Any())
             {
                 DepartmentRepository dr = new DepartmentRepository();
+                GroupRepository gr = new GroupRepository();
 
-                db.Groups.AddRange(new Group[]
+                Group group1 = new Group()
                 {
-                    new Group { Name = "ПК-312",
-                                Year = 1,
-                                DepartmentId = dr.GetIdByName("Кафедра маркетинга") },
+                    Name = "ПК-312",
+                    Year = 1,
+                    DepartmentId = dr.GetIdByName("Кафедра маркетинга")
+                };
+                gr.Insert(group1);
 
-                    new Group { Name = "ПК-211",
-                                Year = 2,
-                                DepartmentId = dr.GetIdByName("Кафедра маркетинга") },
+                Group group2 = new Group()
+                {
+                    Name = "ПК-211",
+                    Year = 2,
+                    DepartmentId = dr.GetIdByName("Кафедра маркетинга")
+                };
+                gr.Insert(group2);
 
-                    new Group { Name = "ПК-100",
-                                Year = 3,
-                                DepartmentId = dr.GetIdByName("Кафедра маркетинга") },
+                Group group3 = new Group()
+                {
+                    Name = "ПК-100",
+                    Year = 3,
+                    DepartmentId = dr.GetIdByName("Кафедра маркетинга")
+                };
+                gr.Insert(group3);
 
-                    new Group { Name = "ПК-80",
-                                Year = 4,
-                                DepartmentId = dr.GetIdByName("Кафедра маркетинга")},
+                Group group4 = new Group()
+                {
+                    Name = "ПК-80",
+                    Year = 4,
+                    DepartmentId = dr.GetIdByName("Кафедра маркетинга")
+                };
+                gr.Insert(group4);
 
-                    new Group { Name = "ПК-53",
-                                Year = 5,
-                                DepartmentId = dr.GetIdByName("Кафедра маркетинга") },
+                Group group5 = new Group()
+                {
+                    Name = "ПК-53",
+                    Year = 5,
+                    DepartmentId = dr.GetIdByName("Кафедра маркетинга")
+                };
+                gr.Insert(group5);
 
-                    new Group { Name = "ПБ-325",
-                                Year = 1,
-                                DepartmentId = dr.GetIdByName("Кафедра бухгалтерского учета") },
+                Group group6 = new Group()
+                {
+                    Name = "ПБ-325",
+                    Year = 1,
+                    DepartmentId = dr.GetIdByName("Кафедра бухгалтерского учета")
+                };
+                gr.Insert(group6);
 
-                    new Group { Name = "ПБ-221",
-                                Year = 2,
-                                DepartmentId = dr.GetIdByName("Кафедра бухгалтерского учета")},
+                Group group7 = new Group()
+                {
+                    Name = "ПБ-221",
+                    Year = 2,
+                    DepartmentId = dr.GetIdByName("Кафедра бухгалтерского учета")
+                };
+                gr.Insert(group7);
 
-                    new Group { Name = "КК-52",
-                                Year = 5,
-                                DepartmentId = dr.GetIdByName("Кафедра кибербезопасности") },
+                Group group8 = new Group()
+                {
+                    Name = "КК-52",
+                    Year = 5,
+                    DepartmentId = dr.GetIdByName("Кафедра кибербезопасности")
+                };
+                gr.Insert(group8);
 
-                    new Group { Name = "КК-55",
-                                Year = 5,
-                                DepartmentId = dr.GetIdByName("Кафедра искусственного интеллекта") },
+                Group group9 = new Group()
+                {
+                    Name = "КК-55",
+                    Year = 5,
+                    DepartmentId = dr.GetIdByName("Кафедра искусственного интеллекта")
+                };
+                gr.Insert(group9);
 
-                    new Group { Name = "ДУ-105",
-                                Year = 3,
-                                DepartmentId = dr.GetIdByName("Кафедра дифф. уравнений") }
-
-                });
-                db.SaveChanges();
+                Group group10 = new Group()
+                {
+                    Name = "ДУ-105",
+                    Year = 3,
+                    DepartmentId = dr.GetIdByName("Кафедра дифф. уравнений")
+                };
+                gr.Insert(group10);
             }
 
             if (!db.GroupsCurators.Any())
             {
+                GroupCuratorRepository gcr = new GroupCuratorRepository();
                 GroupRepository gr = new GroupRepository();
                 CuratorRepository cr = new CuratorRepository();
 
-                db.GroupsCurators.AddRange(new GroupCurator[]
-                {
-                    new GroupCurator { GroupId = gr.GetIdByName("ПК-312"), CuratorId = cr.GetIdByName("Воробьев") },
+                GroupCurator gc1 = new GroupCurator() { GroupId = gr.GetIdByName("ПК-312"), CuratorId = cr.GetIdByName("Воробьев") };
+                gcr.Insert(gc1);
 
-                    new GroupCurator { GroupId = gr.GetIdByName("ПК-211"), CuratorId = cr.GetIdByName("Иванова") },
+                GroupCurator gc2 = new GroupCurator() { GroupId = gr.GetIdByName("ПК-211"), CuratorId = cr.GetIdByName("Иванова") };
+                gcr.Insert(gc2);
 
-                    new GroupCurator { GroupId = gr.GetIdByName("ПК-100"), CuratorId = cr.GetIdByName("Собко") },
+                GroupCurator gc3 = new GroupCurator() { GroupId = gr.GetIdByName("ПК-100"), CuratorId = cr.GetIdByName("Собко") };
+                gcr.Insert(gc3);
 
-                    new GroupCurator { GroupId = gr.GetIdByName("ПК-80"), CuratorId = cr.GetIdByName("Иванова") },
+                GroupCurator gc4 = new GroupCurator() { GroupId = gr.GetIdByName("ПК-80"), CuratorId = cr.GetIdByName("Иванова") };
+                gcr.Insert(gc4);
 
-                    new GroupCurator { GroupId = gr.GetIdByName("ПК-53"), CuratorId = cr.GetIdByName("Воробьев") },
+                GroupCurator gc5 = new GroupCurator() { GroupId = gr.GetIdByName("ПК-53"), CuratorId = cr.GetIdByName("Воробьев") };
+                gcr.Insert(gc5);
 
-                    new GroupCurator { GroupId = gr.GetIdByName("ПБ-325"), CuratorId = cr.GetIdByName("Петрова") },
+                GroupCurator gc6 = new GroupCurator() { GroupId = gr.GetIdByName("ПБ-325"), CuratorId = cr.GetIdByName("Петрова") };
+                gcr.Insert(gc6);
 
-                    new GroupCurator { GroupId = gr.GetIdByName("ПБ-221"), CuratorId = cr.GetIdByName("Петрова") },
+                GroupCurator gc7 = new GroupCurator() { GroupId = gr.GetIdByName("ПБ-221"), CuratorId = cr.GetIdByName("Петрова") };
+                gcr.Insert(gc7);
 
-                    new GroupCurator { GroupId = gr.GetIdByName("КК-52"), CuratorId = cr.GetIdByName("Кабанов") },
+                GroupCurator gc8 = new GroupCurator() { GroupId = gr.GetIdByName("КК-52"), CuratorId = cr.GetIdByName("Кабанов") };
+                gcr.Insert(gc8);
 
-                    new GroupCurator { GroupId = gr.GetIdByName("КК-55"), CuratorId = cr.GetIdByName("Кабанов") },
+                GroupCurator gc9 = new GroupCurator() { GroupId = gr.GetIdByName("КК-55"), CuratorId = cr.GetIdByName("Кабанов") };
+                gcr.Insert(gc9);
 
-                    new GroupCurator { GroupId = gr.GetIdByName("ДУ-105"), CuratorId = cr.GetIdByName("Кабанов")}
-                });
-                db.SaveChanges();
-            }
+                GroupCurator gc10 = new GroupCurator() { GroupId = gr.GetIdByName("ДУ-105"), CuratorId = cr.GetIdByName("Кабанов") };
+                gcr.Insert(gc10);
 
-            if (!db.GroupsLectures.Any())
-            {
-                GroupRepository gr = new GroupRepository();
-                LectureRepository lr = new LectureRepository(db);
-
-                db.GroupsLectures.AddRange(new GroupLecture[]
-                {
-                    new GroupLecture { GroupId = gr.GetIdByName("ПК-312"),
-                                       LectureId = lr.GetId("Теория маркетинга", "Филатов", DateOnly.Parse("2025-09-19")) },
-
-                    new GroupLecture { GroupId = gr.GetIdByName("ПК-211"),
-                                       LectureId = lr.GetId("Теория маркетинга", "Филатов",DateOnly.Parse("2025-09-19")) },
-
-                    new GroupLecture { GroupId = gr.GetIdByName("КК-52"),
-                                       LectureId = lr.GetId("Кибербезопасность", "Шехов",DateOnly.Parse("2025-09-21")) },
-
-                    new GroupLecture { GroupId = gr.GetIdByName("ДУ-105"),
-                                       LectureId = lr.GetId("Математический анализ", "Бабич", DateOnly.Parse("2025-09-23")) },
-
-                    new GroupLecture { GroupId = gr.GetIdByName("ПБ-221"),
-                                       LectureId = lr.GetId("Математический анализ", "Бабич", DateOnly.Parse("2025-09-23")) }
-                });
-                db.SaveChanges();
             }
 
             if (!db.GroupsStudents.Any())
             {
+                GroupStudentRepository gsr = new GroupStudentRepository();
                 GroupRepository gr = new GroupRepository();
                 StudentRepository sr = new StudentRepository();
 
-                db.GroupsStudents.AddRange(new GroupStudent[]
-                {
-                    new GroupStudent { GroupId = gr.GetIdByName("ПК-312"), StudentId = sr.GetIdByName("Хачатрян") },
+                GroupStudent gs1 = new GroupStudent() { GroupId = gr.GetIdByName("ПК-312"), StudentId = sr.GetIdByName("Хачатрян") };
+                gsr.Insert(gs1);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("ПК-211"), StudentId = sr.GetIdByName("Шипков") },
+                GroupStudent gs2 = new GroupStudent() { GroupId = gr.GetIdByName("ПК-211"), StudentId = sr.GetIdByName("Шипков") };
+                gsr.Insert(gs2);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("ПК-100"), StudentId = sr.GetIdByName("Михайлов") },
+                GroupStudent gs3 = new GroupStudent() { GroupId = gr.GetIdByName("ПК-100"), StudentId = sr.GetIdByName("Михайлов") };
+                gsr.Insert(gs3);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("ПК-80"), StudentId = sr.GetIdByName("Санкина") },
+                GroupStudent gs4 = new GroupStudent() { GroupId = gr.GetIdByName("ПК-80"), StudentId = sr.GetIdByName("Санкина") };
+                gsr.Insert(gs4);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("ПК-53"), StudentId = sr.GetIdByName("Корса") },
+                GroupStudent gs5 = new GroupStudent() { GroupId = gr.GetIdByName("ПК-53"), StudentId = sr.GetIdByName("Корса") };
+                gsr.Insert(gs5);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("ПК-53"), StudentId = sr.GetIdByName("Блажко") },
+                GroupStudent gs6 = new GroupStudent() { GroupId = gr.GetIdByName("ПК-53"), StudentId = sr.GetIdByName("Блажко") };
+                gsr.Insert(gs6);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("ПБ-325"), StudentId = sr.GetIdByName("Глущенко") },
+                GroupStudent gs7 = new GroupStudent() { GroupId = gr.GetIdByName("ПБ-325"), StudentId = sr.GetIdByName("Глущенко") };
+                gsr.Insert(gs7);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("ПБ-221"), StudentId = sr.GetIdByName("Петров") },
+                GroupStudent gs8 = new GroupStudent() { GroupId = gr.GetIdByName("ПБ-221"), StudentId = sr.GetIdByName("Петров") };
+                gsr.Insert(gs8);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("КК-52"), StudentId = sr.GetIdByName("Иванов") },
+                GroupStudent gs9 = new GroupStudent() { GroupId = gr.GetIdByName("КК-52"), StudentId = sr.GetIdByName("Иванов") };
+                gsr.Insert(gs9);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("КК-52"), StudentId = sr.GetIdByName("Кучернюк") },
+                GroupStudent gs10 = new GroupStudent() { GroupId = gr.GetIdByName("КК-52"), StudentId = sr.GetIdByName("Кучернюк") };
+                gsr.Insert(gs10);
 
-                    new GroupStudent { GroupId = gr.GetIdByName("КК-52"), StudentId = sr.GetIdByName("Кичуга") }
-                });
-                db.SaveChanges();
+                GroupStudent gs11 = new GroupStudent() { GroupId = gr.GetIdByName("КК-52"), StudentId = sr.GetIdByName("Кичуга") };
+                gsr.Insert(gs11);
+                
             }
+
+            if (!db.Lectures.Any())
+            {
+                LectureRepository lr = new LectureRepository();
+                SubjectRepository sr = new SubjectRepository();
+                TeacherRepository tr = new TeacherRepository();
+                
+                Lecture l1 = new Lecture() 
+                { 
+                    LectureDate = DateOnly.Parse("2025-09-23"),
+                    SubjectId = sr.GetIdByName("Математический анализ"),
+                    TeacherId = tr.GetIdByName("Бабич") 
+                };
+                lr.Insert(l1);
+
+                Lecture l2 = new Lecture() 
+                {
+                    LectureDate = DateOnly.Parse("2025-09-20"),
+                    SubjectId = sr.GetIdByName("Макроекономика"),
+                    TeacherId = tr.GetIdByName("Грач") 
+                };
+                lr.Insert(l2);
+
+                Lecture l3 = new Lecture()
+                {
+                    LectureDate = DateOnly.Parse("2025-09-20"),
+                    SubjectId = sr.GetIdByName("Микроекономика"),
+                    TeacherId = tr.GetIdByName("Грач")
+                };
+                lr.Insert(l3);
+
+                Lecture l4 = new Lecture()
+                {
+                    LectureDate = DateOnly.Parse("2025-09-21"),
+                    SubjectId = sr.GetIdByName("Кибербезопасность"),
+                    TeacherId = tr.GetIdByName("Шехов")
+                };
+                lr.Insert(l4);
+
+                Lecture l5 = new Lecture()
+                {
+                    LectureDate = DateOnly.Parse("2025-09-19"),
+                    SubjectId = sr.GetIdByName("Теория маркетинга"),
+                    TeacherId = tr.GetIdByName("Филатов")
+                };
+                lr.Insert(l5);
+                
+            }
+
+            if (!db.GroupsLectures.Any())
+            {
+                GroupLectureRepository glr = new GroupLectureRepository();
+                GroupRepository gr = new GroupRepository();
+                LectureRepository lr = new LectureRepository();
+
+                GroupLecture gl1 = new GroupLecture()
+                {
+                    GroupId = gr.GetIdByName("ПК-312"),
+                    LectureId = lr.GetId("Теория маркетинга", "Филатов", DateOnly.Parse("2025-09-19"))
+                };
+                glr.Insert(gl1);
+
+                GroupLecture gl2 = new GroupLecture()
+                {
+                    GroupId = gr.GetIdByName("ПК-211"),
+                    LectureId = lr.GetId("Теория маркетинга", "Филатов", DateOnly.Parse("2025-09-19"))
+                };
+                glr.Insert(gl2);
+
+                GroupLecture gl3 = new GroupLecture()
+                {
+                    GroupId = gr.GetIdByName("КК-52"),
+                    LectureId = lr.GetId("Кибербезопасность", "Шехов", DateOnly.Parse("2025-09-21"))
+                };
+                glr.Insert(gl3);
+
+                GroupLecture gl4 = new GroupLecture()
+                {
+                    GroupId = gr.GetIdByName("ДУ-105"),
+                    LectureId = lr.GetId("Математический анализ", "Бабич", DateOnly.Parse("2025-09-23"))
+                };
+                glr.Insert(gl4);
+
+                GroupLecture gl5 = new GroupLecture()
+                {
+                    GroupId = gr.GetIdByName("ПБ-221"),
+                    LectureId = lr.GetId("Математический анализ", "Бабич", DateOnly.Parse("2025-09-23"))
+                };
+                glr.Insert(gl5);
+                                
+            }          
         }
     }
 }

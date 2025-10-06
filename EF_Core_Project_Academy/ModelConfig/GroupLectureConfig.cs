@@ -14,8 +14,11 @@ namespace EF_Core_Project_Academy.ModelConfig
         public void Configure(EntityTypeBuilder<GroupLecture> tb)
         {
             tb.ToTable("GroupsLectures");
-            
-            tb.HasKey(t => new { t.GroupId, t.LectureId });
+
+            tb.HasKey(e => e.Id).HasName("PK_GroupsLecturesId");
+            tb.Property(e => e.Id).HasColumnName("groupsLectures_id");
+
+            tb.HasIndex(e => new { e.LectureId, e.GroupId }).IsUnique();
 
             tb.Property(e => e.GroupId).HasColumnName("groupsLectures_groupId").IsRequired();
 

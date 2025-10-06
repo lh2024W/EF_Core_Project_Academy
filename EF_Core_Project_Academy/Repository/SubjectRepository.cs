@@ -18,7 +18,17 @@ namespace EF_Core_Project_Academy.Repository
 
         public bool Delete(Subject entity)
         {
-            throw new NotImplementedException();
+            using (MyDBContext context = new MyDBContext())
+            {
+                var id = context.Subjects.Where(s => s.Id == entity.Id).Select(s => s.Id).FirstOrDefault();
+                if (id > 0)
+                {
+                    context.Subjects.Remove(entity);
+                    context.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
         }
 
         public Subject GetById(int id)
@@ -41,17 +51,54 @@ namespace EF_Core_Project_Academy.Repository
 
         public int Insert(Subject entity)
         {
-            throw new NotImplementedException();
+            if (entity is null) return 0;
+
+            using (MyDBContext context = new MyDBContext())
+            {
+                // Проверяем наличие дубля
+                bool exists = context.Subjects.Any(s =>
+                    s.Name == entity.Name
+                );
+
+                if (exists)
+                {
+                    Console.WriteLine("Такой предмет уже есть!");
+                    return 0;        // уже есть такой предмет, не добавляем
+                }
+
+                context.Subjects.Add(entity); //добавляем, возвращаем Id
+                context.SaveChanges();
+
+                return entity.Id;
+
+            }
         }
 
         public IEnumerable<Subject> Select()
         {
-            throw new NotImplementedException();
+            using (MyDBContext context = new MyDBContext())
+            {
+                var allSubjects = context.Subjects.ToList();
+                return allSubjects;
+            }
         }
 
         public int Update(Subject entity)
         {
-            throw new NotImplementedException();
+            if (entity is null || entity.Id <= 0) return 0;
+
+            using (MyDBContext context = new MyDBContext())
+            {
+                var s = context.Subjects.Find(entity.Id);
+                if (s is null) return 0;
+
+                // копируем нужные поля
+                s.Name = entity.Name;
+
+                context.SaveChanges();
+
+                return entity.Id;
+            }
         }
     }
     

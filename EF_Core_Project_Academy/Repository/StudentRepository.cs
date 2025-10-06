@@ -18,7 +18,17 @@ namespace EF_Core_Project_Academy.Repository
 
         public bool Delete(Student entity)
         {
-            throw new NotImplementedException();
+            using (MyDBContext context = new MyDBContext())
+            {
+                var id = context.Students.Where(s => s.Id == entity.Id).Select(s => s.Id).FirstOrDefault();
+                if (id > 0)
+                {
+                    context.Students.Remove(entity);
+                    context.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
         }
 
         public Student GetById(int id)
@@ -30,28 +40,68 @@ namespace EF_Core_Project_Academy.Repository
             }
         }
 
-        public int GetIdByName(string name)
+        public int GetIdByName(string surname)
         {
             using (MyDBContext context = new MyDBContext())
             {
-                var stId = context.Students.Where(s => s.Name == name).Select(s => s.Id).FirstOrDefault();
+                var stId = context.Students.Where(s => s.Surname == surname).Select(s => s.Id).FirstOrDefault();
                 return stId;
             }
         }
 
         public int Insert(Student entity)
         {
-            throw new NotImplementedException();
+            if (entity is null) return 0;
+
+            using (MyDBContext context = new MyDBContext())
+            {
+                // Проверяем наличие дубля
+                bool exists = context.Students.Any(s =>
+                    s.Name == entity.Name &&
+                    s.Surname == entity.Surname
+                );
+
+                if (exists)
+                {
+                    Console.WriteLine("Такой студент уже есть!");
+                    return 0;        // уже есть такой студент, не добавляем
+                }
+
+                context.Students.Add(entity); //добавляем, возвращаем Id
+                context.SaveChanges();
+
+                return entity.Id;
+
+            }
         }
 
         public IEnumerable<Student> Select()
         {
-            throw new NotImplementedException();
+            using (MyDBContext context = new MyDBContext())
+            {
+                var allStudents = context.Students.ToList();
+                return allStudents;
+            }
         }
 
         public int Update(Student entity)
         {
-            throw new NotImplementedException();
+            if (entity is null || entity.Id <= 0)  return 0;
+
+            using (MyDBContext context = new MyDBContext())
+            {
+                var s = context.Students.Find(entity.Id);
+                if (s is null) return 0;
+
+                // копируем нужные поля
+                s.Name = entity.Name;
+                s.Surname = entity.Surname;
+                s.Rating = entity.Rating;
+
+                context.SaveChanges();
+
+                return entity.Id;
+            }
         }
     }
     

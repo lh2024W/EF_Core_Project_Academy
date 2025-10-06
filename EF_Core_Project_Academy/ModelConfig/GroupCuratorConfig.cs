@@ -15,7 +15,10 @@ namespace EF_Core_Project_Academy.ModelConfig
         {
             tb.ToTable("GroupsCurators");
 
-            tb.HasKey(t => new { t.CuratorId, t.GroupId });
+            tb.HasKey(e => e.Id).HasName("PK_GroupsCuratorsId");
+            tb.Property(e => e.Id).HasColumnName("groupsCurators_id");
+
+            tb.HasIndex(e => new { e.CuratorId, e.GroupId }).IsUnique();
 
             tb.Property(e => e.CuratorId).HasColumnName("groupsCurators_curatorId").IsRequired();
 
