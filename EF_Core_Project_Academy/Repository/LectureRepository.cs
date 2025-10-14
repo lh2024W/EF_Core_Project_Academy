@@ -1,4 +1,5 @@
-﻿using EF_Core_Project_Academy.AcademyDBContext;
+﻿using Dapper;
+using EF_Core_Project_Academy.AcademyDBContext;
 using EF_Core_Project_Academy.Interfaces;
 using EF_Core_Project_Academy.Model;
 using Microsoft.Data.SqlClient;
@@ -14,10 +15,126 @@ namespace EF_Core_Project_Academy.Repository
 {
     public class LectureRepository : IBaseRepository<Lecture>
     {
-        
-        IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
+
+        ////////// Dapper CRUD операции /////////////////////
+
+        /*static IDbConnection CreateConn()
+        {
+            var cs = "Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;";
+            var conn = new SqlConnection(cs); // создаём подключение
+            conn.Open();                      // открываем сразу (Dapper не открывает сам)
+            return conn;                      // возвращаем открытое подключение
+        }*/
+
+        public int InsertDapper(Lecture entity)
+        {
+            const string sql = @"   INSERT INTO Lectures (lectures_date,
+                                                          lectures_subjectId,
+                                                          lectures_teacherId)
+                                    OUTPUT INSERTED.lectures_id
+                                    VALUES (@LectureDate, @SubjectId, @TeacherId);
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.LectureDate,
+                entity.SubjectId,
+                entity.TeacherId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public Lecture GetByIdDapper(int id)
+        {
+            const string sql = @" SELECT lectures_id AS Id,
+                                         lectures_date,
+                                         lectures_subjectId,
+                                         lectures_teacherId
+                                  FROM Lectures
+                                  WHERE lectures_id = @Id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.QuerySingleOrDefault<Lecture>(sql, new { Id = id });
+        }
+
+        public int GetIdByNameDapper(string surname)
+        {
+            const string sql = @" SELECT lectures_id 
+                                  FROM Lectures
+                                  JOIN Teachers ON lectures_teacherId = teachers_id
+                                  WHERE teachers_surname = @Surname;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.ExecuteScalar<int>(sql, new { Surname = surname });
+        }
+
+        public int UpdateDapper(Lecture entity)
+        {
+            const string sql = @"   UPDATE Lectures 
+                                    SET lectures_date=@LectureDate,
+                                        lectures_subjectId=@SubjectId,
+                                        lectures_teacherId=@TeacherId
+                                    OUTPUT INSERTED.lectures_id
+                                    WHERE lectures_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.LectureDate,
+                entity.SubjectId,
+                entity.TeacherId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public IEnumerable<Lecture> SelectDapper()
+        {
+            const string sql = @"   SELECT lectures_id AS Id,
+                                           lectures_date AS LectureDate,
+                                           
+                                           subjects_id as Id,
+                                           subjects_name AS Name,
+                                           
+                                           teachers_id as Id,
+                                           teachers_name AS Name,
+                                           teachers_surname AS Surname
+                                    FROM Lectures
+                                    JOIN Subjects ON lectures_subjectId = subjects_id
+                                    JOIN Teachers ON lectures_teacherId = teachers_id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            // multi-mapping: сначала Lectures, затем Subject, затем Teacher,возвращаем Lectures с присвоенным Subject и Teacher
+            var list = conn.Query<Lecture, Subject, Teacher, Lecture>(
+                sql,
+                (lec, sub, t) => { lec.Subject = sub; lec.Teacher = t; return lec; },
+                splitOn: "Id" // <-- с какой колонки начинать маппить второй объект (Subject и Teacher)
+            );
+
+            return list;
+        }
+
+        public bool DeleteDapper(GroupStudent entity)
+        {
+            const string sql = @"   DELETE
+                                    FROM Lectures 
+                                    WHERE lectures_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int res = conn.Execute(sql, new { Id = entity.Id });
+            if (res == 1) return true;
+            return false;
+        }
 
 
+        /// ///////////////////////////////////////////////////////////////////////////
         public bool Delete(Lecture entity)
         {
             if (entity is null || entity.SubjectId <= 0 || entity.TeacherId <= 0)
@@ -74,7 +191,7 @@ namespace EF_Core_Project_Academy.Repository
             }
         }
 
-        public int GetId(string subjectName, string teacherSurname, DateOnly date)
+        public int GetId(string subjectName, string teacherSurname, DateTime date)
         {
             using (MyDBContext context = new MyDBContext())
             {

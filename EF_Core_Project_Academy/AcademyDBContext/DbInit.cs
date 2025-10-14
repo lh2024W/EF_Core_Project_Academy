@@ -349,7 +349,7 @@ namespace EF_Core_Project_Academy.AcademyDBContext
                 
                 Lecture l1 = new Lecture() 
                 { 
-                    LectureDate = DateOnly.Parse("2025-09-23"),
+                    LectureDate = DateTime.Parse("2025-09-23"),
                     SubjectId = sr.GetIdByName("Математический анализ"),
                     TeacherId = tr.GetIdByName("Бабич") 
                 };
@@ -357,7 +357,7 @@ namespace EF_Core_Project_Academy.AcademyDBContext
 
                 Lecture l2 = new Lecture() 
                 {
-                    LectureDate = DateOnly.Parse("2025-09-20"),
+                    LectureDate = DateTime.Parse("2025-09-20"),
                     SubjectId = sr.GetIdByName("Макроекономика"),
                     TeacherId = tr.GetIdByName("Грач") 
                 };
@@ -365,7 +365,7 @@ namespace EF_Core_Project_Academy.AcademyDBContext
 
                 Lecture l3 = new Lecture()
                 {
-                    LectureDate = DateOnly.Parse("2025-09-20"),
+                    LectureDate = DateTime.Parse("2025-09-20"),
                     SubjectId = sr.GetIdByName("Микроекономика"),
                     TeacherId = tr.GetIdByName("Грач")
                 };
@@ -373,7 +373,7 @@ namespace EF_Core_Project_Academy.AcademyDBContext
 
                 Lecture l4 = new Lecture()
                 {
-                    LectureDate = DateOnly.Parse("2025-09-21"),
+                    LectureDate = DateTime.Parse("2025-09-21"),
                     SubjectId = sr.GetIdByName("Кибербезопасность"),
                     TeacherId = tr.GetIdByName("Шехов")
                 };
@@ -381,7 +381,7 @@ namespace EF_Core_Project_Academy.AcademyDBContext
 
                 Lecture l5 = new Lecture()
                 {
-                    LectureDate = DateOnly.Parse("2025-09-19"),
+                    LectureDate = DateTime.Parse("2025-09-19"),
                     SubjectId = sr.GetIdByName("Теория маркетинга"),
                     TeacherId = tr.GetIdByName("Филатов")
                 };
@@ -398,35 +398,35 @@ namespace EF_Core_Project_Academy.AcademyDBContext
                 GroupLecture gl1 = new GroupLecture()
                 {
                     GroupId = gr.GetIdByName("ПК-312"),
-                    LectureId = lr.GetId("Теория маркетинга", "Филатов", DateOnly.Parse("2025-09-19"))
+                    LectureId = lr.GetId("Теория маркетинга", "Филатов", DateTime.Parse("2025-09-19"))
                 };
                 glr.Insert(gl1);
 
                 GroupLecture gl2 = new GroupLecture()
                 {
                     GroupId = gr.GetIdByName("ПК-211"),
-                    LectureId = lr.GetId("Теория маркетинга", "Филатов", DateOnly.Parse("2025-09-19"))
+                    LectureId = lr.GetId("Теория маркетинга", "Филатов", DateTime.Parse("2025-09-19"))
                 };
                 glr.Insert(gl2);
 
                 GroupLecture gl3 = new GroupLecture()
                 {
                     GroupId = gr.GetIdByName("КК-52"),
-                    LectureId = lr.GetId("Кибербезопасность", "Шехов", DateOnly.Parse("2025-09-21"))
+                    LectureId = lr.GetId("Кибербезопасность", "Шехов", DateTime.Parse("2025-09-21"))
                 };
                 glr.Insert(gl3);
 
                 GroupLecture gl4 = new GroupLecture()
                 {
                     GroupId = gr.GetIdByName("ДУ-105"),
-                    LectureId = lr.GetId("Математический анализ", "Бабич", DateOnly.Parse("2025-09-23"))
+                    LectureId = lr.GetId("Математический анализ", "Бабич", DateTime.Parse("2025-09-23"))
                 };
                 glr.Insert(gl4);
 
                 GroupLecture gl5 = new GroupLecture()
                 {
                     GroupId = gr.GetIdByName("ПБ-221"),
-                    LectureId = lr.GetId("Математический анализ", "Бабич", DateOnly.Parse("2025-09-23"))
+                    LectureId = lr.GetId("Математический анализ", "Бабич", DateTime.Parse("2025-09-23"))
                 };
                 glr.Insert(gl5);
                                 

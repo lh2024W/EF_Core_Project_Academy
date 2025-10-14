@@ -1,4 +1,5 @@
-﻿using EF_Core_Project_Academy.AcademyDBContext;
+﻿using Dapper;
+using EF_Core_Project_Academy.AcademyDBContext;
 using EF_Core_Project_Academy.Interfaces;
 using EF_Core_Project_Academy.Model;
 using Microsoft.Data.SqlClient;
@@ -14,8 +15,101 @@ namespace EF_Core_Project_Academy.Repository
     public class SubjectRepository : IBaseRepository<Subject>
     {
 
-        IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
 
+        ////////// Dapper CRUD операции /////////////////////
+
+        /*static IDbConnection CreateConn()
+        {
+            var cs = "Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;";
+            var conn = new SqlConnection(cs); // создаём подключение
+            conn.Open();                      // открываем сразу (Dapper не открывает сам)
+            return conn;                      // возвращаем открытое подключение
+        }*/
+
+        public int InsertDapper(Subject entity)
+        {
+
+            const string sql = @"   INSERT INTO Subjects (subjects_name)
+                                    OUTPUT INSERTED.subjects_id
+                                    VALUES (@Name);
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.Name
+            });
+            return newId;
+        }
+
+        public Subject GetByIdDapper(int id)
+        {
+            const string sql = @" SELECT subjects_id AS Id,
+                                         subjects_name
+                                  FROM Subjects
+                                  WHERE subjects_id = @Id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.QuerySingleOrDefault<Subject>(sql, new { Id = id });
+        }
+
+        public int GetIdByNameDapper(string name)
+        {
+            const string sql = @" SELECT subjects_id 
+                                  FROM Subjects
+                                  WHERE subjects_name = @Name;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.ExecuteScalar<int>(sql, new { Name = name });
+        }
+
+        public int UpdateDapper(Subject entity)
+        {
+            const string sql = @"   UPDATE Subjects 
+                                    SET subjects_name=@Name
+                                    OUTPUT INSERTED.subjects_id
+                                    WHERE subjects_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.Name,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public IEnumerable<Subject> SelectDapper()
+        {
+            const string sql = @"   SELECT subjects_id AS Id,
+                                           subjects_name AS Name
+                                    FROM Subjects;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.Query<Subject>(sql);
+        }
+
+        public bool DeleteDapper(Subject entity)
+        {
+            const string sql = @"   DELETE
+                                    FROM Subjects 
+                                    WHERE subjects_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int res = conn.Execute(sql, new { Id = entity.Id });
+            if (res == 1) return true;
+            return false;
+        }
+
+
+        
+        /// //////////////////////////////////////////////////////////////////////
+        
         public bool Delete(Subject entity)
         {
             using (MyDBContext context = new MyDBContext())

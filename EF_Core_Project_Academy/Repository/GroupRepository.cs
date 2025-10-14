@@ -1,4 +1,5 @@
-﻿using EF_Core_Project_Academy.AcademyDBContext;
+﻿using Dapper;
+using EF_Core_Project_Academy.AcademyDBContext;
 using EF_Core_Project_Academy.Interfaces;
 using EF_Core_Project_Academy.Model;
 using Microsoft.Data.SqlClient;
@@ -14,9 +15,121 @@ namespace EF_Core_Project_Academy.Repository
 {
     public class GroupRepository : IBaseRepository<Group>
     {
+                        ////////// Dapper CRUD операции /////////////////////
 
-        IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
+        /*static IDbConnection CreateConn()
+        {
+            var cs = "Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;";
+            var conn = new SqlConnection(cs); // создаём подключение
+            conn.Open();                      // открываем сразу (Dapper не открывает сам)
+            return conn;                      // возвращаем открытое подключение
+        }*/
 
+        public int InsertDapper(Group entity)
+        {
+            const string sql = @"   INSERT INTO Groups (groups_name,
+                                                        groups_year, 
+                                                        groups_departmentId)
+                                    OUTPUT INSERTED.groups_id
+                                    VALUES (@Name, @Year, @DepartmentId);
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.Name,
+                entity.Year,
+                entity.DepartmentId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public Group GetByIdDapper(int id)
+        {
+            const string sql = @" SELECT groups_id AS Id,
+                                         groups_name,
+                                         groups_year,
+                                         groups_departmentId
+                                  FROM Groups
+                                  WHERE groups_id = @Id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.QuerySingleOrDefault<Group>(sql, new { Id = id });
+        }
+
+        public int GetIdByNameDapper(string name)
+        {
+            const string sql = @" SELECT groups_id 
+                                  FROM Groups
+                                  WHERE groups_name = @Name;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.ExecuteScalar<int>(sql, new { Name = name });
+        }
+
+        public int UpdateDapper(Group entity)
+        {
+            const string sql = @"   UPDATE Groups 
+                                    SET groups_name=@Name, 
+                                        groups_year=@Year, 
+                                        groups_departmentId=@DepartmentId
+                                    OUTPUT INSERTED.groups_id
+                                    WHERE groups_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.Name,
+                entity.Year,
+                entity.DepartmentId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public IEnumerable<Group> SelectDapper()
+        {
+            const string sql = @"   SELECT groups_id AS Id,
+                                           groups_name AS Name,
+                                           groups_year AS Year,
+                                           
+                                           departments_id as Id,
+                                           departments_name AS Name
+                                    FROM Groups
+                                    JOIN Departments ON groups_departmentId = departments_id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            // multi-mapping: сначала Group, затем Department, возвращаем Group с присвоенным Department
+            var list = conn.Query<Group, Department, Group>(
+                sql,
+                (gr, dep) => { gr.Department = dep; return gr; },
+                splitOn: "Id" // <-- с какой колонки начинать маппить второй объект (Department)
+            );
+
+            return list;
+        }
+
+        public bool DeleteDapper(Group entity)
+        {
+            const string sql = @"   DELETE
+                                    FROM Groups 
+                                    WHERE groups_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int res = conn.Execute(sql, new { Id = entity.Id });
+            if (res == 1) return true;
+            return false;
+        }
+
+
+        /// ///////////////////////////////////////////////////////////////////////////
+        
         public bool Delete(Group entity)
         {
             if (entity is null || entity.DepartmentId <= 0)

@@ -1,4 +1,5 @@
-﻿using EF_Core_Project_Academy.AcademyDBContext;
+﻿using Dapper;
+using EF_Core_Project_Academy.AcademyDBContext;
 using EF_Core_Project_Academy.Interfaces;
 using EF_Core_Project_Academy.Model;
 using Microsoft.Data.SqlClient;
@@ -14,10 +15,130 @@ namespace EF_Core_Project_Academy.Repository
 {
     public class DepartmentRepository : IBaseRepository<Department>
     {
-        
-        IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
-        
-        
+
+        ////////// Dapper CRUD операции /////////////////////
+
+        /*static IDbConnection CreateConn()
+        {
+            var cs = "Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;";
+            var conn = new SqlConnection(cs); // создаём подключение
+            conn.Open();                      // открываем сразу (Dapper не открывает сам)
+            return conn;                      // возвращаем открытое подключение
+        }*/
+
+        public int InsertDapper(Department entity)
+        {
+
+            const string sql = @"   INSERT INTO Departments (departments_name, 
+                                                            departments_building, 
+                                                            departments_financing, 
+                                                            departments_facultyId)
+                                    OUTPUT INSERTED.departments_id
+                                    VALUES (@Name, @Building, @Financing, @FacultyId);
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.Name,
+                entity.Financing,
+                entity.Building,
+                entity.FacultyId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public Department GetByIdDapper(int id)
+        {
+            const string sql = @" SELECT departments_id AS Id,
+                                         departments_name,
+                                         departments_financing,
+                                         departments_building,
+                                         departments_facultyId
+                                  FROM Departments
+                                  WHERE departments_id = @Id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.QuerySingleOrDefault<Department>(sql, new { Id = id });
+        }
+
+        public int GetIdByNameDapper(string name)
+        {
+            const string sql = @" SELECT departments_id 
+                                  FROM Departments
+                                  WHERE departments_name = @Name;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.ExecuteScalar<int>(sql, new { Name = name });
+        }
+
+        public int UpdateDapper(Department entity)
+        {
+            const string sql = @"   UPDATE Departments 
+                                    SET departments_name=@Name, 
+                                        departments_financing=@Financing, 
+                                        departments_building=@Building, 
+                                        departments_facultyId=@FacultyId
+                                    OUTPUT INSERTED.departments_id
+                                    WHERE departments_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.Name,
+                entity.Financing,
+                entity.Building,
+                entity.FacultyId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public IEnumerable<Department> SelectDapper()
+        {
+            const string sql = @"   SELECT departments_id AS Id,
+                                           departments_name AS Name,
+                                           departments_financing AS Financing,
+                                           departments_building AS Building,
+
+                                           faculties_id as Id,
+                                           faculties_name AS Name
+                                    FROM Departments
+                                    JOIN Faculties ON departments_facultyId = faculties_id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            // multi-mapping: сначала Department, затем Faculty, возвращаем Department с присвоенным Faculty
+            var list = conn.Query<Department, Faculty, Department>(
+                sql,
+                (dep, fac) => { dep.Faculty = fac; return dep; },
+                splitOn: "Id" // <-- с какой колонки начинать маппить второй объект (Faculty)
+            );
+
+            return list;
+        }
+
+        public bool DeleteDapper(Department entity)
+        {
+            const string sql = @"   DELETE
+                                    FROM Departments 
+                                    WHERE departments_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int res = conn.Execute(sql, new { Id = entity.Id });
+            if (res == 1) return true;
+            return false;
+        }
+
+
+
+        /// ///////////////////////////////////////////////////////////////////////////
+
         public bool Delete(Department entity)
         {
             if (entity is null || entity.FacultyId <= 0)

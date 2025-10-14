@@ -3,6 +3,7 @@ using EF_Core_Project_Academy.ModelConfig;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -45,7 +46,16 @@ namespace EF_Core_Project_Academy.AcademyDBContext
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var cs = ConfigurationManager
+                    .ConnectionStrings["AcademyDb"]?
+                    .ConnectionString;
+
+                optionsBuilder.UseSqlServer(cs);
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

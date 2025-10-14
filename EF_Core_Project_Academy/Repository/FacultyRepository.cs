@@ -1,4 +1,5 @@
-﻿using EF_Core_Project_Academy.AcademyDBContext;
+﻿using Dapper;
+using EF_Core_Project_Academy.AcademyDBContext;
 using EF_Core_Project_Academy.Interfaces;
 using EF_Core_Project_Academy.Model;
 using Microsoft.Data.SqlClient;
@@ -13,8 +14,100 @@ namespace EF_Core_Project_Academy.Repository
 {
     public class FacultyRepository : IBaseRepository<Faculty>
     {
-       IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
 
+        ////////// Dapper CRUD операции /////////////////////
+
+        /*static IDbConnection CreateConn()
+        {
+            var cs = "Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;";
+            var conn = new SqlConnection(cs); // создаём подключение
+            conn.Open();                      // открываем сразу (Dapper не открывает сам)
+            return conn;                      // возвращаем открытое подключение
+        }*/
+
+        public int InsertDapper(Faculty entity)
+        {
+
+            const string sql = @"   INSERT INTO Faculties (faculties_name)
+                                    OUTPUT INSERTED.faculties_id
+                                    VALUES (@Name);
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.Name
+            });
+            return newId;
+        }
+
+        public Faculty GetByIdDapper(int id)
+        {
+            const string sql = @" SELECT faculties_id AS Id,
+                                         faculties_name
+                                  FROM Faculties
+                                  WHERE faculties_id = @Id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.QuerySingleOrDefault<Faculty>(sql, new { Id = id });
+        }
+
+        public int GetIdByNameDapper(string name)
+        {
+            const string sql = @" SELECT faculties_id 
+                                  FROM Faculties
+                                  WHERE faculties_name = @Name;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.ExecuteScalar<int>(sql, new { Name = name });
+        }
+
+        public int UpdateDapper(Faculty entity)
+        {
+            const string sql = @"   UPDATE Faculties 
+                                    SET faculties_name=@Name
+                                    OUTPUT INSERTED.faculties_id
+                                    WHERE faculties_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.Name,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public IEnumerable<Faculty> SelectDapper()
+        {
+            const string sql = @"   SELECT faculties_id AS Id,
+                                           faculties_name AS Name
+                                    FROM Faculties;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.Query<Faculty>(sql);
+        }
+
+        public bool DeleteDapper(Faculty entity)
+        {
+            const string sql = @"   DELETE
+                                    FROM Faculties 
+                                    WHERE faculties_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int res = conn.Execute(sql, new { Id = entity.Id });
+            if (res == 1) return true;
+            return false;
+        }
+
+        
+        /// ////////////////////////////////////////////////////////////
+        
         public bool Delete(Faculty entity)
         {
             using (MyDBContext context = new MyDBContext())

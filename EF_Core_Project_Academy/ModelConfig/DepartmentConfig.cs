@@ -26,16 +26,15 @@ namespace EF_Core_Project_Academy.ModelConfig
                 .HasColumnType("money");
             
 
-            tb.HasIndex(e => e.Name, "UQ_DepartmentName").IsUnique();
-            tb.Property(e => e.Name).HasColumnName("departments_name")
+           tb.Property(e => e.Name).HasColumnName("departments_name")
                 .HasColumnType("nvarchar(100)")
                 .IsRequired();
-
-            
+                        
             tb.Property(e => e.FacultyId).HasColumnName("departments_facultyId");
-            
-           
-             tb.HasOne(d => d.Faculty).WithMany(p => p.Departments)
+
+            tb.HasIndex(e => new { e.Name, e.FacultyId }, "UQ_DepartmentNameFacultyId").IsUnique();
+
+            tb.HasOne(d => d.Faculty).WithMany(p => p.Departments)
                 .HasForeignKey(d => d.FacultyId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_departments_facultyId");

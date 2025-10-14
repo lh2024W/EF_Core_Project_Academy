@@ -1,4 +1,5 @@
-﻿using EF_Core_Project_Academy.AcademyDBContext;
+﻿using Dapper;
+using EF_Core_Project_Academy.AcademyDBContext;
 using EF_Core_Project_Academy.Interfaces;
 using EF_Core_Project_Academy.Model;
 using Microsoft.Data.SqlClient;
@@ -15,8 +16,131 @@ namespace EF_Core_Project_Academy.Repository
     public class GroupLectureRepository : IBaseRepository<GroupLecture>
     {
 
-        IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
 
+        ////////// Dapper CRUD операции /////////////////////
+
+        /*static IDbConnection CreateConn()
+        {
+            var cs = "Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;";
+            var conn = new SqlConnection(cs); // создаём подключение
+            conn.Open();                      // открываем сразу (Dapper не открывает сам)
+            return conn;                      // возвращаем открытое подключение
+        }*/
+
+        public int InsertDapper(GroupLecture entity)
+        {
+            const string sql = @"   INSERT INTO GroupsLectures (groupsLectures_groupId,
+                                                                groupsLectures_lectureId)
+                                    OUTPUT INSERTED.groupsLectures_id
+                                    VALUES (@GroupId, @LectureId);
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.GroupId,
+                entity.LectureId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public GroupLecture GetByIdDapper(int id)
+        {
+            const string sql = @" SELECT groupsLectures_id AS Id,
+                                         groupsLectures_groupId,
+                                         groupsLectures_lectureId
+                                  FROM GroupsLectures
+                                  WHERE groupsLectures_id = @Id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.QuerySingleOrDefault<GroupLecture>(sql, new { Id = id });
+        }
+
+        public int GetIdByNameDapper(string name)
+        {
+            const string sql = @" SELECT groupsLectures_id 
+                                  FROM GroupsLectures
+                                  JOIN Groups ON groupsLectures_groupId = groups_id
+                                  WHERE groups_name = @Name;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.ExecuteScalar<int>(sql, new { Name = name });
+        }
+
+        public int UpdateDapper(GroupLecture entity)
+        {
+            const string sql = @"   UPDATE GroupsLectures 
+                                    SET groupsLectures_groupId=@GroupId,
+                                        groupsLectures_lectureId=@LectureId
+                                    OUTPUT INSERTED.groupsLectures_id
+                                    WHERE groupsLectures_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.GroupId,
+                entity.LectureId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public IEnumerable<GroupLecture> SelectDapper()
+        {
+            const string sql = @"   SELECT groupsLectures_id AS Id,
+                                           
+                                           groups_id as Id,
+                                           groups_name AS Name,
+                                           groups_year AS Year,
+
+                                           lectures_id as Id,
+                                           lectures_date AS LectureDate,
+
+                                           subjects_id as Id,
+                                           subjects_name AS Name,
+                                           
+                                           teachers_id as Id,
+                                           teachers_name AS Name,
+                                           teachers_surname AS Surname
+                                    FROM GroupsLectures
+                                    JOIN Groups ON groupsLectures_groupId = groups_id
+                                    JOIN Lectures ON groupsLectures_lectureId = lectures_id
+                                    JOIN Subjects ON lectures_subjectId = subjects_id
+                                    JOIN Teachers ON lectures_teacherId = teachers_id;
+                                    
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            // multi-mapping: сначала GroupsLectures, затем Group, затем Lecture,возвращаем GroupsLectures с присвоенным Group и Lecture, Subject, Teacher
+            var list = conn.Query<GroupLecture, Group, Lecture, Subject, Teacher, GroupLecture>(
+                sql,
+                (grlec, gr, lec, sub, t) => { grlec.Group = gr; grlec.Lecture = lec; grlec.Lecture.Subject = sub;
+                    grlec.Lecture.Teacher = t; return grlec; },
+                splitOn: "Id, Id, Id, Id" // <-- с какой колонки начинать маппить второй объект (Group и Lecture, Subject, Teacher)
+            );
+
+            return list;
+        }
+
+        public bool DeleteDapper(GroupLecture entity)
+        {
+            const string sql = @"   DELETE
+                                    FROM GroupsLectures 
+                                    WHERE groupsLectures_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int res = conn.Execute(sql, new { Id = entity.Id });
+            if (res == 1) return true;
+            return false;
+        }
+
+
+        /// ///////////////////////////////////////////////////////////////////////////
         public bool Delete(GroupLecture entity)
         {
             if (entity is null || entity.LectureId <= 0 || entity.GroupId <= 0)

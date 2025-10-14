@@ -9,7 +9,7 @@ namespace EF_Core_Project_Academy.Model
     public partial class Lecture
     {
         public int Id { get; set; }
-        public DateOnly LectureDate { get; set; } = new DateOnly();
+        public DateTime LectureDate { get; set; } = new DateTime(); //лучше делать DateTime иначе Dapper падает
 
         public int SubjectId { get; set; }
 

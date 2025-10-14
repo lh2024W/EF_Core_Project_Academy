@@ -15,10 +15,293 @@ namespace EF_Core_Project_Academy
             //db.Database.EnsureDeleted();//снести если не жалко данные
             //db.Database.EnsureCreated();//создать заново
 
-            DbInit.Init(db);   // ← заполняем
-            Console.WriteLine("Готово! Данные засеяны.");
+            //DbInit.Init(db);   // ← заполняем
+            //Console.WriteLine("Готово! Данные засеяны.");
 
 
+                                ///////////////// Dapper CRUD операции //////////////////
+            
+
+            ///////////////// GroupsLectures ////////////////////////
+
+            //GroupLectureRepository glr = new GroupLectureRepository();
+            //GroupLecture grouplecture = new GroupLecture() { GroupId = 2, LectureId = 1};
+            //glr.InsertDapper(grouplecture);
+
+            //GroupLecture gl = glr.GetById(6);
+            //Console.WriteLine($" {gl.Lecture.LectureDate} Предмет: {gl.Lecture.Subject.Name} Преподаватель: {gl.Lecture.Teacher.Name} " +
+            //    $"{ gl.Lecture.Teacher.Surname} Группа: {gl.Group.Name}");
+
+            //Console.WriteLine(glr.GetIdByNameDapper("ПК-312"));
+
+            //GroupLecture gl = glr.GetById(6);
+            //gl.GroupId = 3;
+            //Console.WriteLine(glr.UpdateDapper(gl));
+
+            /*var groupslectures =  glr.SelectDapper();
+            foreach (var gl in groupslectures)
+            {
+                Console.WriteLine($" {gl.Lecture.LectureDate} Предмет: {gl.Lecture.Subject.Name} " +
+                    $"Преподаватель: {gl.Lecture.Teacher.Name} { gl.Lecture.Teacher.Surname} Группа: {gl.Group.Name}\n");
+            }*/
+
+            //GroupLecture gl = glr.GetById(6);
+            //Console.WriteLine(glr.Delete(gl));
+
+
+            ///////////////// Lectures ////////////////////////
+
+            //LectureRepository lr = new LectureRepository();
+            //Lecture lecture = new Lecture() { LectureDate = "2025-09-23", SubjectId = 2, TeacherId = 1};
+            //lr.InsertDapper(lecture);
+
+            //Lecture l = lr.GetById(6);
+            //Console.WriteLine($" {l.LectureDate} Предмет: {l.Subject.Name} Преподаватель: {l.Teacher.Name} { l.Teacher.Surname}");
+
+            //Console.WriteLine(lr.GetIdByNameDapper("Бабич"));
+
+            //Lecture l = lr.GetById(6);
+            //l.TeacherId = 3;
+            //Console.WriteLine(lr.UpdateDapper(l));
+
+            //Lecture l = lr.GetById(6);
+            //l.LectureDate = "2025-10-23";
+            //Console.WriteLine(lr.UpdateDapper(l));
+
+            /*var lectures =  lr.SelectDapper();
+            foreach (var l in lectures)
+            {
+                Console.WriteLine($"{l.Id} {l.LectureDate} Предмет: {l.Subject.Name} Преподаватель: {l.Teacher.Name} {l.Teacher.Surname}\n");
+            }*/
+
+            //Lecture l = lr.GetById(6);
+            //Console.WriteLine(lr.Delete(l));
+
+
+            ///////////////// GroupsStudents ////////////////////////
+
+            //GroupStudentRepository gsr = new GroupStudentRepository();
+            //GroupStudent groupStudent = new GroupStudent() { GroupId = 2, StudentId = 1};
+            //gsr.InsertDapper(groupStudent);
+
+            //GroupStudent gs = gsr.GetById(12);
+            //Console.WriteLine(gs.Group.Name + ' ' + gs.Student.Name + ' ' + gs.Student.Surname);
+
+            //Console.WriteLine(gsr.GetIdByNameDapper("ПК-312"));
+
+            //GroupStudent gs = gsr.GetById(12);
+            //gs.GroupId = 3;
+            //Console.WriteLine(gsr.UpdateDapper(gs));
+
+            /*var groupsStudents =  gsr.SelectDapper();
+            foreach (var gs in groupsStudents)
+            {
+                Console.WriteLine($"{gs.Id} Группа: {gs.Group.Name} Год - {gs.Group.Year} Студент: {gs.Student.Name} {gs.Student.Surname}\n");
+            }*/
+
+            //GroupStudent gs = gsr.GetById(12);
+            //Console.WriteLine(gsr.Delete(gs));
+
+            ///////////////// GroupsCurators ////////////////////////
+
+            //GroupCuratorRepository gcr = new GroupCuratorRepository();
+            //GroupCurator groupCurator = new GroupCurator() { GroupId = 2, CuratorId = 1};
+            //gcr.InsertDapper(groupCurator);
+
+            //GroupCurator gc = gcr.GetById(12);
+            //Console.WriteLine(gc.Group.Name + ' ' + gc.Curator.Name + ' ' + gc.Curator.Surname);
+
+            //Console.WriteLine(gcr.GetIdByNameDapper("ПК-312"));
+
+            //GroupCurator gc = gcr.GetById(12);
+            //gc.GroupId = 3;
+            //Console.WriteLine(gcr.UpdateDapper(gc));
+
+            /*var groupsCurators =  gcr.SelectDapper();
+            foreach (var gc in groupsCurators)
+            {
+                Console.WriteLine($"{gc.Id} Группа: {gc.Group.Name} Год - {gc.Group.Year} Куратор: {gc.Curator.Name} {gc.Curator.Surname}\n");
+            }*/
+
+            //GroupCurator gc = gcr.GetById(12);
+            //Console.WriteLine(gcr.Delete(gc));
+
+
+            ///////////////// Groups ////////////////////////
+
+            //GroupRepository gr = new GroupRepository();
+            //Group group = new Group() { Name = "Светлана", Year = 2, DepartmentId = 9};
+            //gr.InsertDapper(group);
+
+            //Group g = gr.GetById(12);
+            //Console.WriteLine(g.Name + ' ' + g.Year + ' ' + g.Department.Name);
+
+            //Console.WriteLine(gr.GetIdByNameDapper("Светлана"));
+
+            //Group g = gr.GetById(12);
+            //g.Name = "Богдан";
+            //Console.WriteLine(gr.UpdateDapper(g));
+
+            /*var groups =  gr.SelectDapper();
+            foreach (var g in groups)
+            {
+                Console.WriteLine($"{g.Id} {g.Name} Год - {g.Year} {g.Department.Name} \n");
+            }*/
+
+            //Group g = gr.GetById(12);
+            //Console.WriteLine(gr.Delete(g));
+
+
+            ///////////////// Departments ////////////////////////
+
+            //DepartmentRepository dr = new DepartmentRepository();
+            //Department department = new Department() { Name = "Светлана", Financing = 165000, Building = 2, FacultyId = 2};
+            //dr.InsertDapper(department);
+
+            //Department d = dr.GetById(11);
+            //Console.WriteLine(d.Name + ' ' + d.Financing + ' ' + d.Building + ' ' + d.FacultyId);
+
+            //Console.WriteLine(dr.GetIdByNameDapper("Светлана"));
+
+            //Department d = dr.GetById(11);
+            //d.Name = "Богдан";
+            //Console.WriteLine(dr.UpdateDapper(d));
+
+            /*var departments =  dr.SelectDapper();
+            foreach (var d in departments)
+            {
+                Console.WriteLine($"{d.Id} {d.Name} Финансирование - {d.Financing} Здание - {d.Building} {d.Faculty.Name} \n");
+            }*/
+
+            //Department d = dr.GetById(11);
+            //Console.WriteLine(dr.Delete(d));
+
+            //Console.WriteLine("Готово!");
+
+            ///////////////// Curators ////////////////////////
+
+            //CuratorRepository cr = new CuratorRepository();
+            //Curator curator = new Curator() { Name = "Светлана", Surname = "Грабарь"};
+            //cr.InsertDapper(curator);
+
+            //Curator c = cr.GetById(1);
+            //Console.WriteLine(c.Name + ' ' + c.Surname);
+
+            //Console.WriteLine(cr.GetIdByNameDapper("Грабарь"));
+
+            //Curator c = cr.GetById(6);
+            //c.Name = "Богдан";
+            //Console.WriteLine(cr.UpdateDapper(c));
+
+            /*var curators =  cr.SelectDapper();
+            foreach (var c in curators)
+            {
+                Console.WriteLine($"{c.Id} {c.Name} {c.Surname}");
+            }*/
+
+            //Curator c = cr.GetById(6);
+            //Console.WriteLine(cr.Delete(c));
+
+
+            ///////////////// Students ////////////////////////
+
+            //StudentRepository sr = new StudentRepository();
+            //Student student = new Student() { Name = "Светлана", Surname = "Грабарь", Rating = 2};
+            //sr.InsertDapper(student);
+
+            //Student s = sr.GetById(1);
+            //Console.WriteLine(s.Name + ' ' + s.Surname + ' ' + s.Rating);
+
+            //Console.WriteLine(sr.GetIdByNameDapper("Грабарь"));
+
+            //Student s = sr.GetById(13);
+            //s.Name = "Богдан";
+            //Console.WriteLine(sr.UpdateDapper(s));
+
+            /*var students =  sr.SelectDapper();
+            foreach (var s in students)
+            {
+                Console.WriteLine($"{s.Id} {s.Name} {s.Surname} {s.Rating}");
+            }*/
+
+            //Student s = sr.GetById(13);
+            //Console.WriteLine(sr.Delete(s));
+
+
+            ///////////////// Faculties ////////////////////////
+
+            //FacultyRepository fr = new FacultyRepository();
+            //Faculty faculty = new Faculty() { Name = "Светлана"};
+            //fr.InsertDapper(faculty);
+
+            //Faculty f = fr.GetById(1);
+            //Console.WriteLine(f.Name);
+
+            //Console.WriteLine(fr.GetIdByNameDapper("Светлана"));
+
+            //Faculty f = fr.GetById(1);
+            //f.Name = "Богдан";
+            //Console.WriteLine(fr.UpdateDapper(f));
+
+            /*var faculties =  fr.SelectDapper();
+            foreach (var f in faculties)
+            {
+                Console.WriteLine($"{f.Id} {f.Name}");
+            }*/
+
+            //Faculty f = fr.GetById(1);
+            //Console.WriteLine(fr.Delete(f));
+
+            ///////////////// Subjects ////////////////////////
+
+            //SubjectRepository sr = new SubjectRepository();
+            //Subject subject = new Subject() { Name = "Светлана"};
+            //sr.InsertDapper(subject);
+
+            //Subject s = sr.GetById(1);
+            //Console.WriteLine(s.Name);
+
+            //Console.WriteLine(sr.GetIdByNameDapper("Светлана"));
+
+            //Subject s = sr.GetById(6);
+            //s.Name = "Богдан";
+            //Console.WriteLine(sr.UpdateDapper(s));
+
+            /*var subjects =  sr.SelectDapper();
+            foreach (var s in subjects)
+            {
+                Console.WriteLine($"{s.Id} {s.Name}");
+            }*/
+
+            //Subject s = sr.GetById(6);
+            //Console.WriteLine(sr.Delete(s));
+
+            ///////////////// Teachers ////////////////////////
+
+            //TeacherRepository tr = new TeacherRepository();
+            //Teacher teacher = new Teacher() { Name = "Светлана", Surname = "Грабарь", Salary = 18000, IsProfessor = true};
+            //tr.InsertDapper(teacher);
+
+            //Teacher t = tr.GetById(6);
+            //Console.WriteLine(t.Name + ' ' + t.Surname + ' ' + t.Salary + ' ' + t.IsProfessor);
+
+            //Console.WriteLine(tr.GetIdByNameDapper("Грабарь"));
+
+            //Teacher t = tr.GetById(6);
+            //t.Name = "Богдан";
+            //Console.WriteLine(tr.UpdateDapper(t));
+
+            /*var teachers =  tr.SelectDapper();
+            foreach (var t in teachers)
+            {
+                Console.WriteLine($"{t.Id} {t.Name} {t.Surname} {t.Salary} {t.IsProfessor}");
+            }*/
+
+            //Teacher t = tr.GetById(6);
+            //Console.WriteLine(tr.Delete(t));
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //////////////////    GroupLecture   ////////////////////
 
             //GroupLectureRepository glr = new GroupLectureRepository();

@@ -1,4 +1,5 @@
-﻿using EF_Core_Project_Academy.AcademyDBContext;
+﻿using Dapper;
+using EF_Core_Project_Academy.AcademyDBContext;
 using EF_Core_Project_Academy.Interfaces;
 using EF_Core_Project_Academy.Model;
 using Microsoft.Data.SqlClient;
@@ -15,8 +16,121 @@ namespace EF_Core_Project_Academy.Repository
     public class GroupCuratorRepository : IBaseRepository<GroupCurator>
     {
 
-        IDbConnection connection = new SqlConnection(@"Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;");
+        ////////// Dapper CRUD операции /////////////////////
 
+        /*static IDbConnection CreateConn()
+        {
+            var cs = "Server=WIN-UKQRC56FDU3;Database=ProjectAcademyEFCore;Trusted_Connection=True;TrustServerCertificate=True;";
+            var conn = new SqlConnection(cs); // создаём подключение
+            conn.Open();                      // открываем сразу (Dapper не открывает сам)
+            return conn;                      // возвращаем открытое подключение
+        }*/
+
+        public int InsertDapper(GroupCurator entity)
+        {
+            const string sql = @"   INSERT INTO GroupsCurators (groupsCurators_groupId,
+                                                                groupsCurators_curatorId)
+                                    OUTPUT INSERTED.groupsCurators_id
+                                    VALUES (@GroupId, @CuratorId);
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.GroupId,
+                entity.CuratorId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public GroupCurator GetByIdDapper(int id)
+        {
+            const string sql = @" SELECT groupsCurators_id AS Id,
+                                         groupsCurators_groupId,
+                                         groupsCurators_curatorId
+                                  FROM GroupsCurators
+                                  WHERE groupsCurators_id = @Id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.QuerySingleOrDefault<GroupCurator>(sql, new { Id = id });
+        }
+
+        public int GetIdByNameDapper(string name)
+        {
+            const string sql = @" SELECT groupsCurators_id 
+                                  FROM GroupsCurators
+                                  JOIN Groups ON groupsCurators_groupId = groups_id
+                                  WHERE groups_name = @Name;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            return conn.ExecuteScalar<int>(sql, new { Name = name });
+        }
+
+        public int UpdateDapper(GroupCurator entity)
+        {
+            const string sql = @"   UPDATE GroupsCurators 
+                                    SET groupsCurators_groupId=@GroupId,
+                                        groupsCurators_curatorId=@CuratorId
+                                    OUTPUT INSERTED.groupsCurators_id
+                                    WHERE groupsCurators_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int newId = conn.ExecuteScalar<int>(sql, new
+            {
+                entity.GroupId,
+                entity.CuratorId,
+                entity.Id
+            });
+            return newId;
+        }
+
+        public IEnumerable<GroupCurator> SelectDapper()
+        {
+            const string sql = @"   SELECT groupsCurators_id AS Id,
+                                           
+                                           groups_id as Id,
+                                           groups_name AS Name,
+                                           groups_year AS Year,
+
+                                           curators_id as Id,
+                                           curators_name AS Name,
+                                           curators_surname AS Surname
+                                    FROM GroupsCurators
+                                    JOIN Groups ON groupsCurators_groupId = groups_id
+                                    JOIN Curators ON groupsCurators_curatorId = curators_id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            // multi-mapping: сначала GroupsCurators, затем Group, затем Curator,возвращаем GroupsCurators с присвоенным Group и Curator
+            var list = conn.Query<GroupCurator, Group, Curator, GroupCurator >(
+                sql,
+                (grcur, gr, cur) => { grcur.Group = gr; grcur.Curator = cur; return grcur; },
+                splitOn: "Id" // <-- с какой колонки начинать маппить второй объект (Group)
+            );
+
+            return list;
+        }
+
+        public bool DeleteDapper(GroupCurator entity)
+        {
+            const string sql = @"   DELETE
+                                    FROM GroupsCurators 
+                                    WHERE groupsCurators_id=@id;
+                                ";
+
+            using var conn = DbFactory.CreateConn();
+            int res = conn.Execute(sql, new { Id = entity.Id });
+            if (res == 1) return true;
+            return false;
+        }
+
+
+        /// ///////////////////////////////////////////////////////////////////////////
+        
         public bool Delete(GroupCurator entity)
         {
             if (entity is null || entity.CuratorId <= 0 || entity.GroupId <= 0 )
